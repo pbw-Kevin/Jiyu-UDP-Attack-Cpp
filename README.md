@@ -66,7 +66,8 @@ Available options for `<Extra Option>` of `-e` argument:
 
 Target IP available for `<IP>` of `-ip` argument:
 - A direct IP. eg. `192.168.1.1`
-- An IP segment. eg. `192.168.1.2-10`  
+- An IP segment, ends with `/24`. eg. `192.168.1.1/24`
+- An IP segment, represented by `-`. eg. `192.168.1.2-10`  
 Note:  
 Only the last number of an IP is availble to be a segment.  
 This is illegal: `192.168.1-80.1`
@@ -136,9 +137,9 @@ main 192.168.1.1 -e r
 
 8. Loop command:
 
-Send message to target machines with IP `192.168.1.1` to `192.168.1.254`, continue to execute after 50s, totally 3 times:
+Send message to target machines with IP `192.168.1.0` to `192.168.1.255`, continue to execute after 50s, totally 3 times:
 ```bash
-main -ip 192.168.1.1-254 -msg "hello,baby!" -l 3 -t 50
+main -ip 192.168.1.1/24 -msg "hello,baby!" -l 3 -t 50
 ```
 
 ## About
