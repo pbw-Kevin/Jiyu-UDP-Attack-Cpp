@@ -8,4 +8,6 @@
 
 std::string execCmd(std::string cmd, Logger logger);
 
+int strToInt(std::string str);
+
 #endif // JIYUATK_LIB

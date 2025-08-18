@@ -300,6 +300,17 @@
     ```
 - 类型：`std::string`
 
+### 函数：`strToInt`
+
+- 描述：将 `std::string` 转换为 `int`。
+- 参数：
+    ```cpp
+    (
+        std::string str
+    )
+    ```
+- 类型：`int`
+
 ## 头文件：`Logger.h`
 - 描述：以更简单明了的方式输出信息的 Logger。
 

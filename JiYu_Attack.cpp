@@ -135,13 +135,7 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         std::string lStr = rawIP.substr(rawIP.rfind('.') + 1, rawIP.find('-') - rawIP.rfind('.') - 1);
         std::string rStr = rawIP.substr(rawIP.find('-') + 1);
-        int l = 0, r = 0;
-        for(auto i: lStr) {
-            l = l * 10 + i - '0';
-        }
-        for(auto i: rStr) {
-            r = r * 10 + i - '0';
-        }
+        int l = strToInt(lStr), r = strToInt(rStr);
         for(int i = l; i <= r; i++) {
             ret.push_back(segPrefix + std::to_string(i));
         }

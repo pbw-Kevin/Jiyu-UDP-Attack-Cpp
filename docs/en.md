@@ -301,6 +301,18 @@
     ```
 - Type: `std::string`
 
+### Function: `strToInt`
+
+- Desc: Convert `std::string` into `int`.
+- Parameters:
+
+    ```cpp
+    (
+        std::string str
+    )
+    ```
+- Type: `int`
+
 ## Header: `Logger.h`
 - Desc: Logger to log information in an easier and clearer way.
 

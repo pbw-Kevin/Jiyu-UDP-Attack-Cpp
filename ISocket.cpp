@@ -82,8 +82,7 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
         std::string portStr = matches[0];
         portStr = portStr.substr(IP.size() + 1, portStr.size() - IP.size() - 2);
         while(!isprint(portStr.back())) portStr.pop_back();
-        int port = 0;
-        for(auto i: portStr) port = port * 10 + i - '0';
+        int port = strToInt(portStr);
         ret.push_back(port);
         netstat = matches.suffix().str();
     }

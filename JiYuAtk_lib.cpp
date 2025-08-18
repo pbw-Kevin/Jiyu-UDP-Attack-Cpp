@@ -29,3 +29,11 @@ std::string execCmd(std::string cmd, Logger logger) {
         return "";
     }
 }
+
+int strToInt(std::string str) {
+    int ret = 0;
+    for(auto i: str) {
+        ret = ret * 10 + i - '0';
+    }
+    return ret;
+}
