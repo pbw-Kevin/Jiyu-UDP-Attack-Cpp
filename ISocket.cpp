@@ -65,7 +65,7 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
     std::vector<int> ret;
 
     std::string taskStudent = execCmd("tasklist | find \"Student\"", logger);
-    std::regex pattern("[e]\s*\d{1,5}\s*[C]");
+    std::regex pattern("[e]\\s*\\d{1,5}\\s*[C]");
     std::smatch matches;
     if(!std::regex_search(taskStudent, matches, pattern)){
         logger.log(Logger::WARNING, "进程 StudentMain.exe 未找到。返回空结果。");
@@ -77,7 +77,7 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
     while(!isprint(studentPID.back())) studentPID.pop_back();
 
     std::string netstat = execCmd("netstat -ano | find \"" + studentPID + "\"", logger);
-    pattern = std::regex(IP + ":\d{1,5}\s*[*]");
+    pattern = std::regex(IP + ":\\d{1,5}\\s*[*]");
     while(std::regex_search(netstat, matches, pattern)) {
         std::string portStr = matches[0];
         portStr = portStr.substr(IP.size() + 1, portStr.size() - IP.size() - 2);
