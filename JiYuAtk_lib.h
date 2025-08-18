@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <string>
+#include <cstring>
 #include "Logger.h"
 
 std::string execCmd(std::string cmd, Logger logger);

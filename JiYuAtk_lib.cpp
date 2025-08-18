@@ -1,6 +1,7 @@
 #include "JiYuAtk_lib.h"
 #include <cstdio>
 #include <string>
+#include <cstring>
 #include "Logger.h"
 
 #ifdef _WIN32

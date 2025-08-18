@@ -16,7 +16,7 @@ class Logger {
             IERROR,
             CRITICAL,
             NONE
-        };;
+        };
         static std::string getTime();
         void setLevel(int level);
         int getLevel();
