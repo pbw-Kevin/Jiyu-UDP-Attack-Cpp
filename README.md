@@ -3,9 +3,13 @@ A UDP replay attack code for Jiyu, written in C++.
 
 中文文档见 [README_zh.md](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/README_zh.md)
 
+## Note
+It may be misreported by antivirus software because it calls some system firewall services. Just ignore and add trust.
+If you get garbled code after compiling and running, please try to change the encoding and compile. `main.cpp` works fine with GB 2312 encoding.
+
 ## Compile
 Required system: Windows
-Required C++ version: C++14
+Required minimum C++ version: C++11
 
 Note: All the headers are already added into main.cpp manually. Therefore, you just need to copy/download main.cpp and compile it directly instead of adding header files.
 
@@ -48,8 +52,8 @@ Arguments:
 | `-m(--msg) <Message>` | Specify the message to send. | |
 | `-c <Command>` | Command to run on target machine. | |
 | `-e <Extra Option>` | Load extra option. | |
-| `-l <Loop Count>` | Specify the loop count of the command. | 1
-| `-c <Loop Time Interval>` | Specify the loop's interval time of the command, in seconds. | 22 |
+| `-l <Loop Count>` | Specify the loop count of the command. | 1 |
+| `-t <Loop Time Interval>` | Specify the loop's interval time of the command, in seconds. | 22 |
 | `-n(--ncport) <NC Port>` | Specify which port for `nc` command to listen to. | 8888 |
 
 Available options for `<Extra Option>` of `-e` argument:
