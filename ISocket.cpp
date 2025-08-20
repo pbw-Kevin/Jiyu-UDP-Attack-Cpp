@@ -32,7 +32,7 @@ ISocket::ISocket(Logger logger): logger(logger) {
             break;
         }
     }
-    if(localIP != "" && localIPs.size()) localIP = localIPs[0];
+    if(localIP == "" && localIPs.size()) localIP = localIPs[0];
 }
 
 ISocket::~ISocket() {
@@ -90,6 +90,8 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
 }
 
 int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
+    data[12] = rand() % 256;
+    
     SOCKADDR_IN dest_addr;
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(port);

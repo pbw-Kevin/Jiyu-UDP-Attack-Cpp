@@ -15,17 +15,19 @@ std::vector<ParamRet> GetParams(int argc, char *argv[], std::vector<ParamOpt> op
                     (argv[i][1] == opt.opt && argv[i][2] == '\0')
                 ) {
                     ret.exists = true;
-                    if(i < argc - 1) {
+                    if(opt.withParam && i < argc - 1) {
                         i++;
                         if(argv[i][0] != '-') {
                             ret.value = argv[i];
                         }
                         else ret.value = opt.defaultvalue;
                     }
+                    else ret.value = opt.defaultvalue;
                     break;
                 }
             }
         }
+        if(!ret.exists && opt.withParam && opt.defaultvalue != "") ret.value = opt.defaultvalue;
         rets.push_back(ret);
     }
     return rets;

