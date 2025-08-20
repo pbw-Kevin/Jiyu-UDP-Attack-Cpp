@@ -4,11 +4,11 @@ A UDP replay attack code for Jiyu, written in C++.
 中文文档见 [README_zh.md](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/README_zh.md)
 
 ## Note
-It may be misreported by antivirus software because it calls some system firewall services. Just ignore and add trust.
+It may be misreported by antivirus software because it calls some system firewall services. Just ignore and add trust.  
 If you get garbled code after compiling and running, please try to change the encoding and compile. `main.cpp` works fine with GB 2312 encoding.
 
 ## Compile
-Required system: Windows
+Required system: Windows  
 Required minimum C++ version: C++11
 
 Note: All the headers are already added into main.cpp manually. Therefore, you just need to copy/download main.cpp and compile it directly instead of adding header files.
@@ -139,14 +139,14 @@ main 192.168.1.1 -e r
 
 8. Loop command:
 
-Send message to target machines with IP `192.168.1.0` to `192.168.1.255`, continue to execute after 50s, totally 3 times:
+Send message to target machines with IP `192.168.1.1` to `192.168.1.254`, continue to execute after 50s, totally 3 times:
 ```bash
 main -i 192.168.1.1/24 -m "Hello!" -l 3 -t 50
 ```
 
 ## Header Guide & Contributing Guide
 If you hope to call related interfaces of this code in your own code, or develop the source code by yourself, you can focus on related code in the `header` branch, which codes in different modules are separated in different headers, and refer others by headers.
-See header docs: [Jiyu-UDP-Attack-Cpp Header Docs](https://github.com/pbw-Kevin/Jiyu_udp_attack/blob/header/docs/en.md)
+See header docs: [Jiyu-UDP-Attack-Cpp Header Docs](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/header/docs/en.md)
 
 If you want to contribute to this code, you can raise an issue or make a pull request on the `header` branch~ If the pull request is merged, `main.cpp` will be updated in time!
 

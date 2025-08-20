@@ -4,11 +4,11 @@
 English document: [README.md](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/README.md)
 
 ## 注意
-因为调用了某些系统防火墙服务，所以可能会被杀毒软件误报。忽略并添加信任即可。
+因为调用了某些系统防火墙服务，所以可能会被杀毒软件误报。忽略并添加信任即可。  
 如果编译运行后出现乱码的情况，请尝试更换编码后编译。`main.cpp` 使用 GB 2312 编码可以正常使用。
 
 ## 编译
-要求的系统环境：Windows
+要求的系统环境：Windows  
 要求的最低 C++ 版本：C++11
 
 注：所有头文件已经手动添加到 main.cpp 当中。所以你无需将头文件添加到编译环境中，而可以直接复制/下载 main.cpp 文件并直接编译。
@@ -139,14 +139,14 @@ main 192.168.1.1 -e r
 
 8. 循环执行
 
-向 IP 为 `192.168.1.0` 到 `192.168.1.255` 的目标机发送消息“Hello!”，总共 3 次，每两次之间间隔 50 秒：
+向 IP 为 `192.168.1.1` 到 `192.168.1.254` 的目标机发送消息“Hello!”，总共 3 次，每两次之间间隔 50 秒：
 ```bash
 main -i 192.168.1.1/24 -m "Hello!" -l 3 -t 50
 ```
 
 ## 头文件指南 & 贡献指南
 如果你希望在自己的代码中调用本程序的相关接口，或者在源代码的基础上加以开发，可以参考 `header` 分支下的相关代码。其中所有不同模块的代码被分在不同的文件下，以头文件的形式互相引用。
-头文件的文档可以参见：[Jiyu-UDP-Attack-Cpp 头文件文档](https://github.com/pbw-Kevin/Jiyu_udp_attack/blob/header/docs/zh.md)
+头文件的文档可以参见：[Jiyu-UDP-Attack-Cpp 头文件文档](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/header/docs/zh.md)
 
 如果希望对本代码提出贡献，可以提出 Issue / 在 `header` 分支下提出 PR~如果 PR 被合并，会即时对 `main.cpp` 进行更新的！
 
