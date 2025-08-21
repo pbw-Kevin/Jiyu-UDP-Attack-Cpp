@@ -164,8 +164,14 @@
     #### 数组：`cmdCodePrefix[4]`
 
     - 描述：指令的 UDP 数据表前缀。
-    - 类型：`static const std::vector<int>`
+    - 类型：`static const std::vector<BYTE>`
     - 值：值太长，不便展示。
+
+    #### 数组：`cmdContentBegin[2]`
+
+    - 描述：指令 UDP 数据表的填充开始位置。
+    - 类型：`static const int`
+    - 值：`{56, 578}`
 
     #### Enum 枚举类型：`cmdType`
 

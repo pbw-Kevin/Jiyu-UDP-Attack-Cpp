@@ -12,15 +12,15 @@
 #pragma comment(lib,"ws2_32.lib")
 #endif // _MSC_VER
 
-ISocket::ISocket(Logger logger): logger(logger) {
+ISocket::ISocket(Logger* logger): logger(logger) {
     if(WSAStartup(MAKEWORD(2, 2), &wsd) != 0) {
-        logger.log(Logger::IERROR, "执行 WSAStartup 失败。");
+        logger->log(Logger::IERROR, "执行 WSAStartup 失败。");
         return;
     }
 
     client = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(client <= 0) {
-        logger.log(Logger::IERROR, "Socket 客户端启动失败。");
+        logger->log(Logger::IERROR, "Socket 客户端启动失败。");
         return;
     }
     setsockopt(client, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(int));
@@ -44,13 +44,13 @@ std::vector<std::string> ISocket::getLocalIPs() {
     std::vector<std::string> ret;
 
     if(gethostname(host, sizeof(host)) == SOCKET_ERROR) {
-        logger.log(Logger::IERROR, "执行 gethostname 失败。");
+        logger->log(Logger::IERROR, "执行 gethostname 失败。");
         return ret;
     }
 
     struct hostent *hp;
     if((hp = gethostbyname(host)) == NULL) {
-        logger.log(Logger::IERROR, "执行 gethostbyname 失败。");
+        logger->log(Logger::IERROR, "执行 gethostbyname 失败。");
         return ret;
     }
 
@@ -64,11 +64,11 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
     if(IP == "") IP = localIP;
     std::vector<int> ret;
 
-    std::string taskStudent = execCmd("tasklist | find \"Student\"", logger);
+    std::string taskStudent = execCmd("tasklist | findstr \"Student\"", logger);
     std::regex pattern("[e]\\s*\\d{1,5}\\s*[C]");
     std::smatch matches;
     if(!std::regex_search(taskStudent, matches, pattern)){
-        logger.log(Logger::WARNING, "进程 StudentMain.exe 未找到。返回空结果。");
+        logger->log(Logger::WARNING, "进程 StudentMain.exe 未找到。返回空结果。");
         return ret;
     }
     std::string studentPID = matches[0];
@@ -76,7 +76,7 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
     while(!isprint(studentPID.front())) studentPID.erase(studentPID.begin());
     while(!isprint(studentPID.back())) studentPID.pop_back();
 
-    std::string netstat = execCmd("netstat -ano | find \"" + studentPID + "\"", logger);
+    std::string netstat = execCmd("netstat -ano | findstr \"" + studentPID + "\"", logger);
     pattern = std::regex(IP + ":\\d{1,5}\\s*[*]");
     while(std::regex_search(netstat, matches, pattern)) {
         std::string portStr = matches[0];
@@ -91,7 +91,7 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
 
 int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
     data[12] = rand() % 256;
-    
+
     SOCKADDR_IN dest_addr;
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(port);
@@ -100,7 +100,7 @@ int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
     int sendRes;
     sendRes = sendto(client, (const char*)&data[0], data.size() * sizeof(BYTE), 0, (sockaddr*)&dest_addr, sizeof(sockaddr));
     if(sendRes == -1) {
-        logger.log(Logger::IERROR, "发送失败。函数 sendto 出现问题。");
+        logger->log(Logger::IERROR, "发送失败。函数 sendto 出现问题。");
         return 1;
     }
     return 0;

@@ -6,7 +6,7 @@
 #include <cstring>
 #include "Logger.h"
 
-std::string execCmd(std::string cmd, Logger logger);
+std::string execCmd(std::string cmd, Logger* logger);
 
 int strToInt(std::string str);
 

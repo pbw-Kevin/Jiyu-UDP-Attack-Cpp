@@ -11,7 +11,7 @@
 
 class ISocket {
     public:
-        ISocket(Logger logger);
+        ISocket(Logger* logger);
         ~ISocket();
         std::string localIP = "";
         std::vector<std::string> getLocalIPs();
@@ -21,7 +21,7 @@ class ISocket {
         WSADATA wsd;
         int optval = 1;
         SOCKET client;
-        Logger logger;
+        Logger* logger;
 };
 
 #else

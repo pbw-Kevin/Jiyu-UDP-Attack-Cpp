@@ -164,8 +164,14 @@
     #### Array: `cmdCodePrefix[4]`
 
     - Desc: Prefix of UDP Codes of commands.
-    - Type: `static const std::vector<int>`
+    - Type: `static const std::vector<BYTE>`
     - Value: Too long to display.
+
+    #### Array: `cmdCodePrefix[4]`
+
+    - Desc: Begin indices of filling prefix of UDP Codes of commands.
+    - Type: `static const int`
+    - Value: `{56, 578}`
 
     #### Enum: `cmdType`
 

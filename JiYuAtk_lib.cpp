@@ -9,11 +9,11 @@
 #define pclose _pclose
 #endif
 
-std::string execCmd(std::string cmd, Logger logger) {
+std::string execCmd(std::string cmd, Logger* logger) {
     char buf_ps[1024] = {};
     char ps[1024] = {0};
     char result[2048] = {};
-    FILE *ptr;
+    auto ptr = new FILE;
     strcpy(ps, cmd.c_str());
     if((ptr = popen(ps, "r")) != NULL) {
         while(fgets(buf_ps, 1024, ptr) != NULL) {
@@ -25,7 +25,7 @@ std::string execCmd(std::string cmd, Logger logger) {
         return result;
     }
     else {
-        logger.log(Logger::IERROR, "Failed to popen %s", ps);
+        logger->log(Logger::IERROR, "Failed to popen %s", ps);
         return "";
     }
 }
