@@ -1,13 +1,13 @@
 #ifndef JIYU_ATTACK
 #define JIYU_ATTACK
 
-#include <windows.h>
 #include <vector>
 #include <string>
 #include <regex>
 #include "JiYuAtk_lib.h"
 #include "Logger.h"
 #include "ISocket.h"
+#include <windows.h>
 
 class JiYu_Attack {
     public:
