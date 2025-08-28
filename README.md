@@ -5,7 +5,7 @@ A UDP replay attack code for Jiyu, written in C++.
 
 ## Note
 It may be misreported by antivirus software because it calls some system firewall services. Just ignore and add trust.  
-If you get garbled code after compiling and running, please try to change the encoding and compile. `main.cpp` works fine with GB 2312 encoding.
+Since the source code is stored in UTF-8 encoding, while Windows defaults to GB2312 for Chinese encoding, direct compilation may result in compilation failures or garbled output after compilation. Please use the provided compilation command directly or refer to the solutions within. `main.cpp` functions normally when encoded in GB2312.
 
 ## Compile
 Required system: Windows  
@@ -17,15 +17,15 @@ Compile command:
 
 ### MSVC
 ```bash
-cl main.cpp /std:c++14 /Fe:main.exe
+cl main.cpp /std:c++14 /Fe:main.exe /source-charset:utf-8 /execution-charset:gb2312
 ```
 
 ### MinGW
 ```bash
-g++ main.cpp -o main.exe -std=c++14 -lws2_32
+g++ main.cpp -o main.exe -lws2_32 -std=c++14 -fexec-charset=GB2312
 ```
 
-Note when using GCC / MinGW compiler:  
+Note when using MinGW compiler:  
 Make sure Windows-related library is in the library directory.  
 Do not forget the compile argument `-lws_32`. If not using command line, add this argument to the compile options in your IDE.
 

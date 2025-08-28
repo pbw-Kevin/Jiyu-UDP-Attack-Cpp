@@ -5,7 +5,7 @@ English document: [README.md](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/b
 
 ## 注意
 因为调用了某些系统防火墙服务，所以可能会被杀毒软件误报。忽略并添加信任即可。  
-如果编译运行后出现乱码的情况，请尝试更换编码后编译。`main.cpp` 使用 GB 2312 编码可以正常使用。
+因为源代码采用 UTF-8 存储，而 Windows 默认中文编码为 GB2312，故直接编译会出现无法编译或编译后乱码的情况。请直接使用提供的编译命令或参考其中的解决方案。`main.cpp` 使用 GB2312 编码可以正常使用。
 
 ## 编译
 要求的系统环境：Windows  
@@ -17,15 +17,15 @@ English document: [README.md](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/b
 
 ### MSVC
 ```bash
-cl main.cpp /std:c++14 /Fe:main.exe
+cl main.cpp /std:c++14 /Fe:main.exe /source-charset:utf-8 /execution-charset:gb2312
 ```
 
 ### MinGW
 ```bash
-g++ main.cpp -o main.exe -std=c++14 -lws2_32
+g++ main.cpp -o main.exe -lws2_32 -std=c++14 -fexec-charset=GB2312
 ```
 
-当使用 GCC / MinGW 编译器时注意：  
+当使用 MinGW 编译器时注意：  
 确保在引用库的搜索目录中包含了 Windows 相关的程序库。  
 不要忘记添加编译参数 `-lws2_32`。如果不使用命令行编译，请在 IDE 的编译选项中加入相应参数。
 
