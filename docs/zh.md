@@ -20,7 +20,7 @@
     - 默认值：`0`
     
     #### 变量：`longopt`
-    - 描述：长参数字符串。（例子：一个 `--help` 参数对应一个值为 `"help'` 的 `longopt`。）（可选）
+    - 描述：长参数字符串。（例子：一个 `--help` 参数对应一个值为 `"help"` 的 `longopt`。）（可选）
     - 类型：`std::string`
     - 默认值：`""`
     
@@ -87,7 +87,7 @@
     - 参数：
         ```cpp
         (
-            Logger logger // Logger to log
+            Logger* logger // Logger to log
         )
         ```
     
@@ -126,9 +126,8 @@
         ```
     - 类型：`int`
     - 值：
-        +-------+------+
         | 值 | 描述 |
-        |-------|------|
+        |----|------|
         | `0` | 数据包成功发送。 |
         | `1` | 数据表发送失败。在 Logger 中查看详细信息。 |
 
@@ -148,7 +147,7 @@
 
     #### 变量：`logger`
     - 描述：输出信息的 Logger。
-    - 类型：`Logger`
+    - 类型：`Logger*`
 
 ## 头文件：`JiYu_Attack.h`
 
@@ -193,7 +192,7 @@
 
     #### 变量：`client`
     - 描述：Socket 客户端。
-    - 类型：`ISocket`
+    - 类型：`ISocket*`
 
     #### 函数：`IPParser`
     - 描述：用于将 IP 解析为完整 IP 列表的函数。
@@ -278,7 +277,7 @@
     #### 变量：`logger`
     
     - 描述：用于输出信息的 Logger。
-    - 类型：`Logger`
+    - 类型：`Logger*`
 
 ### 函数：`netcat_remote`
 - 描述：用于在远程机器上激活 Netcat 的函数。
@@ -301,7 +300,7 @@
     ```cpp
     (
         std::string cmd, // 要执行的 CMD 命令
-        Logger logger // 绑定的 Logger
+        Logger* logger // 绑定的 Logger
     )
     ```
 - 类型：`std::string`

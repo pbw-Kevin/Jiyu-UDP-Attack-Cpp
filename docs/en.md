@@ -87,7 +87,7 @@
     - Parameters:
         ```cpp
         (
-            Logger logger // Logger to log
+            Logger* logger // Logger to log
         )
         ```
     
@@ -126,7 +126,6 @@
         ```
     - Type: `int`
     - Value: 
-        +-------+------+
         | Value | Desc |
         |-------|------|
         | `0` | Message was sent successfully. |
@@ -148,7 +147,7 @@
 
     #### Variable: `logger`
     - Desc: Logger to log information.
-    - Type: `Logger`
+    - Type: `Logger*`
 
 ## Header: `JiYu_Attack.h`
 
@@ -167,7 +166,7 @@
     - Type: `static const std::vector<BYTE>`
     - Value: Too long to display.
 
-    #### Array: `cmdCodePrefix[4]`
+    #### Array: `cmdContentBegin[2]`
 
     - Desc: Begin indices of filling prefix of UDP Codes of commands.
     - Type: `static const int`
@@ -193,7 +192,7 @@
 
     #### Variable: `client`
     - Desc: Socket client.
-    - Type: `ISocket`
+    - Type: `ISocket*`
 
     #### Function: `IPParser`
     - Desc: Function to parse raw IP into complete IP list.
@@ -278,7 +277,7 @@
     #### Variable: `logger`
     
     - Desc: Logger to log information.
-    - Type: `Logger`
+    - Type: `Logger*`
 
 ### Function: `netcat_remote`
 - Desc: Function to activate netcat on the remote machine.
@@ -302,7 +301,7 @@
     ```cpp
     (
         std::string cmd, // Command to execute
-        Logger logger // Logger binded
+        Logger* logger // Logger binded
     )
     ```
 - Type: `std::string`
