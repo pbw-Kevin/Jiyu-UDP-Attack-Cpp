@@ -556,6 +556,10 @@ int JiYu_Attack::continueScreenControl() {
     return 0;
 }
 
+bool isValidPort(int port) {
+    return port > 0 && port < 65536;
+}
+
 auto jyAtk = new JiYu_Attack;
 
 void startUI() {
@@ -611,7 +615,7 @@ void startUI() {
             if(IP == "") {
                 printf("缺少 IP。\n");
             }
-            else if(port < 0 || port > 65535) {
+            else if(!isValidPort(port)) {
                 printf("非法的端口号。\n");
             }
             else {
@@ -633,7 +637,7 @@ void startUI() {
             if(IP == "") {
                 printf("缺少 IP。\n");
             }
-            else if(port < 0 || port > 65535) {
+            else if(!isValidPort(port)) {
                 printf("非法的端口号。\n");
             }
             else {
@@ -702,7 +706,7 @@ void startUI() {
                 if(IP == "") {
                     printf("缺少 IP。\n");
                 }
-                else if(port < 0 || port > 65535) {
+                else if(!isValidPort(port)) {
                     printf("非法的端口号。\n");
                 }
                 else {
@@ -720,7 +724,7 @@ void startUI() {
                 if(IP == "") {
                     printf("缺少 IP。\n");
                 }
-                else if(port < 0 || port > 65535) {
+                else if(!isValidPort(port)) {
                     printf("非法的端口号。\n");
                 }
                 else {
@@ -738,10 +742,10 @@ void startUI() {
                 if(IP == "") {
                     printf("缺少 IP。\n");
                 }
-                else if(port < 0 || port > 65535) {
+                else if(!isValidPort(port)) {
                     printf("非法的端口号。\n");
                 }
-                else if(port < 0 || port > 65535) {
+                else if(!isValidPort(ncport)) {
                     printf("非法的 netcat 端口号。\n");
                 }
                 else {
@@ -877,9 +881,17 @@ int main(int argc, char *argv[]) {
     }
     std::string rawIP = GetParamfromParams("ip", paramRets).value;
     int port = strToInt(GetParamfromParams("port", paramRets).value);
+    if(!isValidPort(port)) {
+        printf("非法的端口号。\n");
+        return 0;
+    }
     if(extraOpt.exists) {
         if(extraOpt.value == "nc") {
             int ncport = strToInt(GetParamfromParams("ncport", paramRets).value);
+            if(!isValidPort(ncport)) {
+                printf("非法的 netcat 端口号。\n");
+                return 0;
+            }
             jyAtk->netcat(rawIP, port, ncport);
             printf("\nNetcat 已断开连接。\n如果未出现回显，代表未能连接到目标机，请检查 IP 地址和目标机的 Internet 连通性。\n如果出现“未能解析此远程名称”“远程服务器返回错误”等，且 Internet 连通性正常，代表存放脚本的链接失效，请联系 GitHub@pbw-Kevin。\n");
             return 0;
