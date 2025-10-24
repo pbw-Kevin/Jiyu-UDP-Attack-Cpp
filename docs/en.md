@@ -76,6 +76,23 @@
 
 - Desc: Implementation of basic socket UDP functions, using Windows API.
 
+### Struct: `StudentPort`
+
+- Desc: Struct of Student Terminal's port information.
+- Members:
+
+    #### Variable: `pid`
+    - Desc: Student Terminal's pid.
+    - Type: `int`
+    
+    #### Variable: `ip`
+    - Desc: The IP address that is used by Student Terminal to listen.
+    - Type: `std::string`
+    
+    #### Variable: `port`
+    - Desc: The port that is used by Student Terminal to listen.
+    - Type: `int`
+
 ### Class: `ISocket`
 - Public:
     #### Constructor: `ISocket`
@@ -100,14 +117,9 @@
     - Type: `std::vector<std::string>`
 
     #### Function: `getStudentPorts`
-    - Desc: Use specified IP to find ports which Student Terminal listens to.
-    - Parameters:
-        ```cpp
-        (
-            std::string IP = "" // The specified IP
-        )
-        ```
-    - Type: `std::vector<int>`
+    - Desc: To find ports information which Student Terminal listens to.
+    - Parameters: None
+    - Type: `std::vector<StudentPort>`
 
     #### Function: `send`
     - Desc: Send UDP message to the target IP.
@@ -333,18 +345,6 @@
 
 - Desc: Supporting library for `JiYu_Attack` class.
 
-### Function: `execCmd`
-
-- Desc: Run command and get echo in `std::string` instead of console.
-- Parameters:
-    ```cpp
-    (
-        std::string cmd, // Command to execute
-        Logger* logger // Logger binded
-    )
-    ```
-- Type: `std::string`
-
 ### Function: `strToInt`
 
 - Desc: Convert `std::string` into `int`.
@@ -366,6 +366,28 @@
     )
     ```
 - Type: `std::vector<BYTE>`
+
+### Function: `getProcessIdByName`
+
+- Desc: Get the process identifiers by its name.
+- Parameters:
+    ```cpp
+    (
+        const std::string& processName // The name of the process
+    )
+    ```
+- Type: `std::vector<DWORD>`
+
+### Function: `IPDwordToString`
+
+- Desc: Convert the IP address in `DWORD` format into `std::string`.
+- Parameters:
+    ```cpp
+    (
+        DWORD ip
+    )
+    ```
+- Type: `std::string`
 
 ## Header: `Logger.h`
 - Desc: Logger to log information in an easier and clearer way.

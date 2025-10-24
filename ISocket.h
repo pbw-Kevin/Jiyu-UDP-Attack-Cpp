@@ -9,13 +9,19 @@
 #include "Logger.h"
 #include "JiYuAtk_lib.h"
 
+struct StudentPort {
+    int pid;
+    std::string ip;
+    int port;
+};
+
 class ISocket {
     public:
         ISocket(Logger* logger);
         ~ISocket();
         std::string localIP = "";
         std::vector<std::string> getLocalIPs();
-        std::vector<int> getStudentPorts(std::string IP = "");
+        std::vector<StudentPort> getStudentPorts();
         int send(std::string IP, int port, std::vector<BYTE> data);
     private:
         WSADATA wsd;

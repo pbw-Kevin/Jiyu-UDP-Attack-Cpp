@@ -5,6 +5,7 @@
 
 Logger::Logger(FILE* fp, int level) : fp(fp) {
     if(level >= Debug && level <= None) this->curLevel = level;
+    this->log(Info, "Logger initialized.");
 };
 
 Logger::~Logger() {

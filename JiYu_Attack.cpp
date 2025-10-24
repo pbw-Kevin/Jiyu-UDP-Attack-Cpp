@@ -15,6 +15,7 @@
 JiYu_Attack::JiYu_Attack() {
     logger = new Logger(stdout, Logger::Error);
     client = new ISocket(logger);
+    logger->log(Logger::Info, "JiYu_Attack initialized.");
 }
 
 const std::vector<BYTE> JiYu_Attack::cmdCodePrefix[4] = {
@@ -56,11 +57,13 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
     std::vector<std::string> ret;
     std::regex pattern("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
+        logger->log(Logger::Info, "IP parsed. Type: origin.");
         ret.push_back(rawIP);
         return ret;
     }
     pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))-(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
+        logger->log(Logger::Info, "IP parsed. Type: '-' segment.");
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         std::string lStr = rawIP.substr(rawIP.rfind('.') + 1, rawIP.find('-') - rawIP.rfind('.') - 1);
         std::string rStr = rawIP.substr(rawIP.find('-') + 1);
@@ -72,6 +75,7 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
     }
     pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-5]))/24$");
     if(std::regex_match(rawIP, pattern)) {
+        logger->log(Logger::Info, "IP parsed. Type: class C.");
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         for(int i = 1; i < 255; i++) {
             ret.push_back(segPrefix + std::to_string(i));
@@ -168,6 +172,7 @@ int JiYu_Attack::sendPkg(std::string rawIP, int port, std::vector<BYTE> data) {
     data.resize((std::max)((int)data.size(), 1024));
     auto IPs = IPParser(rawIP);
     if(IPs.empty()) return 4;
+    logger->log(Logger::Info, "Sending data package with %d bytes to raw IP %s parsed into %d IPs...", (int)data.size(), rawIP.c_str(), (int)IPs.size());
     int ret = 0;
     for(auto IP: IPs) {
         ret |= client->send(IP, port, data);

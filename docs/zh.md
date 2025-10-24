@@ -77,6 +77,23 @@
 
 - 描述：基于 Windows API 的基本 Socket UDP 函数的实现。
 
+### 结构体：`ParamOpt`
+
+- 描述：极域终端监听的端口信息。
+- 成员：
+
+    #### 变量：`pid`
+    - 描述：极域终端的 pid。
+    - 类型：`int`
+    
+    #### 变量：`ip`
+    - 描述：学生端监听时使用的 IP。
+    - 类型：`std::string`
+    
+    #### 变量：`port`
+    - 描述：学生端监听的端口。
+    - 类型：`int`
+
 ### 类：`ISocket`
 - 公开成员：
     #### 构造函数：`ISocket`
@@ -101,14 +118,9 @@
     - 类型：`std::vector<std::string>`
 
     #### 函数：`getStudentPorts`
-    - 描述：使用指定的 IP 获取极域终端的监听端口。
-    - 参数：
-        ```cpp
-        (
-            std::string IP = "" // 指定的 IP
-        )
-        ```
-    - 类型：`std::vector<int>`
+    - 描述：获取极域终端的监听端口信息。
+    - 参数：无
+    - 类型：`std::vector<StudentPort>`
 
     #### 函数：`send`
     - 描述：向目标 IP 发送 UDP 数据包。
@@ -334,18 +346,6 @@
 
 - 描述：`JiYu_Attack` 头文件的支持库。
 
-### 函数：`execCmd`
-
-- 描述：运行 CMD 命令并将返回内容存储至 `std::string`，而不在控制台上显示。
-- 参数：
-    ```cpp
-    (
-        std::string cmd, // 要执行的 CMD 命令
-        Logger* logger // 绑定的 Logger
-    )
-    ```
-- 类型：`std::string`
-
 ### 函数：`strToInt`
 
 - 描述：将 `std::string` 转换为 `int`。
@@ -367,6 +367,28 @@
     )
     ```
 - 类型：`std::vector<BYTE>`
+
+### 函数：`getProcessIdByName`
+
+- 描述：通过进程名获取进程 pid。
+- 参数：
+    ```cpp
+    (
+        const std::string& processName // 进程名
+    )
+    ```
+- 类型：`std::vector<DWORD>`
+
+### 函数：`IPDwordToString`
+
+- 描述：将 `DWORD` 格式的 IP 地址转换为 `std::string` 格式。
+- 参数：
+    ```cpp
+    (
+        DWORD ip
+    )
+    ```
+- 类型：`std::string`
 
 ## 头文件：`Logger.h`
 - 描述：以更简单明了的方式输出信息的 Logger。

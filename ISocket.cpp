@@ -10,9 +10,11 @@
 
 #ifdef _MSC_VER
 #pragma comment(lib,"ws2_32.lib")
+#pragma comment(lib, "iphlpapi.lib")
 #endif // _MSC_VER
 
 ISocket::ISocket(Logger* logger): logger(logger) {
+    logger->log(Logger::Info, "Initializing ISocket...");
     if(WSAStartup(MAKEWORD(2, 2), &wsd) != 0) {
         logger->log(Logger::Error, "执行 WSAStartup 失败。");
         return;
@@ -25,10 +27,11 @@ ISocket::ISocket(Logger* logger): logger(logger) {
     }
     setsockopt(client, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(int));
 
-    std::vector<std::string> localIPs = getLocalIPs();
-    for(auto IP: localIPs) {
-        if(getStudentPorts(IP).size()) {
-            localIP = IP;
+    auto localIPs = getLocalIPs();
+    auto studentPorts = getStudentPorts();
+    for(auto port: studentPorts) {
+        if(std::find(localIPs.begin(), localIPs.end(), port.ip) != localIPs.end()) {
+            localIP = port.ip;
             break;
         }
     }
@@ -37,6 +40,7 @@ ISocket::ISocket(Logger* logger): logger(logger) {
         if(localIPs.size()) localIP = localIPs[0];
         else logger->log(Logger::Warning, "未能获取合适的 IP。");
     }
+    logger->log(Logger::Info, "ISocket initialized.");
 }
 
 ISocket::~ISocket() {
@@ -64,31 +68,34 @@ std::vector<std::string> ISocket::getLocalIPs() {
     return ret;
 }
 
-std::vector<int> ISocket::getStudentPorts(std::string IP) {
-    if(IP == "") IP = localIP;
-    std::vector<int> ret;
-
-    std::string taskStudent = execCmd("tasklist | findstr \"Student\"", logger);
-    std::regex pattern("[e]\\s*\\d{1,5}\\s*[C]");
-    std::smatch matches;
-    if(!std::regex_search(taskStudent, matches, pattern)){
+std::vector<StudentPort> ISocket::getStudentPorts() {
+    std::vector<StudentPort> ret;
+    auto studentMainPid = getProcessIdByName("StudentMain.exe");
+    if(studentMainPid.empty()) {
         logger->log(Logger::Warning, "进程 StudentMain.exe 未找到。返回空结果。");
         return ret;
     }
-    std::string studentPID = matches[0];
-    studentPID = studentPID.substr(1, studentPID.size() - 2);
-    while(!isprint(studentPID.front())) studentPID.erase(studentPID.begin());
-    while(!isprint(studentPID.back())) studentPID.pop_back();
-
-    std::string netstat = execCmd("netstat -ano | findstr \"" + studentPID + "\"", logger);
-    pattern = std::regex(IP + ":\\d{1,5}\\s*[*]");
-    while(std::regex_search(netstat, matches, pattern)) {
-        std::string portStr = matches[0];
-        portStr = portStr.substr(IP.size() + 1, portStr.size() - IP.size() - 2);
-        while(!isprint(portStr.back())) portStr.pop_back();
-        int port = strToInt(portStr);
-        ret.push_back(port);
-        netstat = matches.suffix().str();
+    logger->log(Logger::Info, "Getting %d Student Terminal pid(s)...", (int)studentMainPid.size());
+    DWORD dwBufferSize = 0;
+    GetExtendedUdpTable(NULL, &dwBufferSize, true, AF_INET, UDP_TABLE_OWNER_PID, 0);
+    MIB_UDPTABLE_OWNER_PID *pMibUdpTable = (MIB_UDPTABLE_OWNER_PID*)malloc(dwBufferSize);
+    DWORD dwRet = GetExtendedUdpTable(pMibUdpTable, &dwBufferSize, true, AF_INET, UDP_TABLE_OWNER_PID, 0);
+    if(dwRet != NO_ERROR) {
+        logger->log(Logger::Error, "获取 UDP 端口列表失败。错误码：%lu", dwRet);
+        return ret;
+    }
+    for(int i = 0; i < (int)pMibUdpTable->dwNumEntries; i++) {
+        if(std::find(
+            studentMainPid.begin(),
+            studentMainPid.end(),
+            pMibUdpTable->table[i].dwOwningPid
+        ) != studentMainPid.end()) {
+            ret.push_back({
+                (int)pMibUdpTable->table[i].dwOwningPid,
+                IPDwordToString(pMibUdpTable->table[i].dwLocalAddr),
+                ntohs(pMibUdpTable->table[i].dwLocalPort)
+            });
+        }
     }
     return ret;
 }

@@ -2,28 +2,9 @@
 #include <cstdio>
 #include <string>
 #include <cstring>
+#include <windows.h>
+#include <tlhelp32.h>
 #include "Logger.h"
-
-std::string execCmd(std::string cmd, Logger* logger) {
-    char buf_ps[1024] = {};
-    char ps[1024] = {0};
-    char result[2048] = {};
-    auto ptr = new FILE;
-    strcpy(ps, cmd.c_str());
-    if((ptr = _popen(ps, "r")) != NULL) {
-        while(fgets(buf_ps, 1024, ptr) != NULL) {
-            strcat(result, buf_ps);
-            if(strlen(result) > 1024) break;
-        }
-        _pclose(ptr);
-        ptr = NULL;
-        return result;
-    }
-    else {
-        logger->log(Logger::Error, "Failed to popen %s", ps);
-        return "";
-    }
-}
 
 int strToInt(std::string str) {
     int ret = 0;
@@ -39,5 +20,32 @@ std::vector<BYTE> formatANSIString(const std::string str) {
     MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, wide, num);
     std::vector<BYTE> ret((num - 1) * sizeof(wchar_t));
     memcpy(&ret[0], wide, (num - 1) * sizeof(wchar_t));
+    return ret;
+}
+
+std::vector<DWORD> getProcessIdByName(const std::string& processName) {
+    std::vector<DWORD> pid;
+    PROCESSENTRY32 entry;
+    entry.dwSize = sizeof(PROCESSENTRY32);
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    if (Process32First(snapshot, &entry)) {
+        do {
+            if (processName == entry.szExeFile) {
+                pid.push_back(entry.th32ProcessID);
+                break;
+            }
+        } while (Process32Next(snapshot, &entry));
+    }
+
+    CloseHandle(snapshot);
+    return pid;
+}
+
+std::string IPDwordToString(DWORD ip) {
+    WORD hiWord=HIWORD(ip);
+    WORD loWord=LOWORD(ip);
+    char ret[20];
+    sprintf(ret, "%d.%d.%d.%d", LOBYTE(loWord), HIBYTE(loWord), LOBYTE(hiWord), HIBYTE(hiWord));
     return ret;
 }
