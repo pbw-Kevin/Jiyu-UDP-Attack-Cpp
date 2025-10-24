@@ -7,15 +7,15 @@
 
 class Logger {
     public:
-        Logger(FILE* fp);
+        Logger(FILE* fp, int level = Warning);
         ~Logger();
         enum LogLevel {
-            DEBUG = 1,
-            INFO,
-            WARNING,
-            IERROR,
-            CRITICAL,
-            NONE
+            Debug = 1,
+            Info,
+            Warning,
+            Error,
+            Critical,
+            None
         };
         static std::string getTime();
         void setLevel(int level);
@@ -25,7 +25,7 @@ class Logger {
 
     private:
         FILE* fp;
-        int curLevel = WARNING;
+        int curLevel = Warning;
 };
 
 #endif // LOGGER

@@ -14,13 +14,13 @@
 
 ISocket::ISocket(Logger* logger): logger(logger) {
     if(WSAStartup(MAKEWORD(2, 2), &wsd) != 0) {
-        logger->log(Logger::IERROR, "执行 WSAStartup 失败。");
+        logger->log(Logger::Error, "执行 WSAStartup 失败。");
         return;
     }
 
     client = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(client <= 0) {
-        logger->log(Logger::IERROR, "Socket 客户端启动失败。");
+        logger->log(Logger::Error, "Socket 客户端启动失败。");
         return;
     }
     setsockopt(client, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(int));
@@ -32,7 +32,11 @@ ISocket::ISocket(Logger* logger): logger(logger) {
             break;
         }
     }
-    if(localIP == "" && localIPs.size()) localIP = localIPs[0];
+    if(localIP == ""){
+        logger->log(Logger::Warning, "未能获取学生端监听端口对应的 IP，尝试使用其它本机 IP 代替……");
+        if(localIPs.size()) localIP = localIPs[0];
+        else logger->log(Logger::Warning, "未能获取合适的 IP。");
+    }
 }
 
 ISocket::~ISocket() {
@@ -44,13 +48,13 @@ std::vector<std::string> ISocket::getLocalIPs() {
     std::vector<std::string> ret;
 
     if(gethostname(host, sizeof(host)) == SOCKET_ERROR) {
-        logger->log(Logger::IERROR, "执行 gethostname 失败。");
+        logger->log(Logger::Error, "执行 gethostname 失败。");
         return ret;
     }
 
     struct hostent *hp;
     if((hp = gethostbyname(host)) == NULL) {
-        logger->log(Logger::IERROR, "执行 gethostbyname 失败。");
+        logger->log(Logger::Error, "执行 gethostbyname 失败。");
         return ret;
     }
 
@@ -68,7 +72,7 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
     std::regex pattern("[e]\\s*\\d{1,5}\\s*[C]");
     std::smatch matches;
     if(!std::regex_search(taskStudent, matches, pattern)){
-        logger->log(Logger::WARNING, "进程 StudentMain.exe 未找到。返回空结果。");
+        logger->log(Logger::Warning, "进程 StudentMain.exe 未找到。返回空结果。");
         return ret;
     }
     std::string studentPID = matches[0];
@@ -90,17 +94,15 @@ std::vector<int> ISocket::getStudentPorts(std::string IP) {
 }
 
 int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
-    data[12] = rand() % 256;
-
     SOCKADDR_IN dest_addr;
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(port);
-    dest_addr.sin_addr.S_un.S_addr = inet_addr(IP.c_str());
+    dest_addr.sin_addr.s_addr = inet_addr(IP.c_str());
 
     int sendRes;
-    sendRes = sendto(client, (const char*)&data[0], data.size() * sizeof(BYTE), 0, (sockaddr*)&dest_addr, sizeof(sockaddr));
+    sendRes = sendto(client, (const char*)&data[0], data.size(), 0, (sockaddr*)&dest_addr, sizeof(sockaddr));
     if(sendRes == -1) {
-        logger->log(Logger::IERROR, "发送失败。函数 sendto 出现问题。");
+        logger->log(Logger::Error, "发送失败。函数 sendto 出现问题。");
         return 1;
     }
     return 0;

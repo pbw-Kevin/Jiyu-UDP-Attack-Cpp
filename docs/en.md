@@ -12,27 +12,22 @@
     #### Variable: `id`
     - Desc: Identifier of a parameter.
     - Type: `std::string`
-    - Default value: `""`
     
     #### Variable: `opt`
     - Desc: Option character. (eg. Option `-o` corresponds `'o'` in `opt`.)
     - Type: `char`
-    - Default value: `0`
     
     #### Variable: `longopt`
-    - Desc: Long option string. (eg. Option '--help' corresponds `"help"` in `longopt`.) (Optional)
+    - Desc: Long option string. (eg. Option '--help' corresponds `"help"` in `longopt`.)
     - Type: `std::string`
-    - Default value: `""`
     
     #### Variable: `withParam`
-    - Desc: Determine whether an extra parameter is needed. (eg. Set it to `true` if an option like `-o example` is used.) (Optional)
+    - Desc: Determine whether an extra parameter is needed. (eg. Set it to `true` if an option like `-o example` is used.)
     - Type: `bool`
-    - Default value: `false`
     
     #### Variable: `defaultValue`
-    - Desc: Default value of the extra parameter. (Optional)
+    - Desc: Default value of the extra parameter.
     - Type: `std::string`
-    - Default value: `""`
 
 ### Struct: `ParamRet`
 
@@ -215,6 +210,12 @@
         )
         ```
     - Type: `int`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Command was sent successfully. |
+        | `1` | Failed to send command. The function `sendto` in the class `ISocket` failed. |
+        | `4` | Illegal IP address. |
 
     #### Function: `sendMsg`
     - Desc: Send message to the target IP.
@@ -227,6 +228,12 @@
         )
         ```
     - Type: `int`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Message was sent successfully. |
+        | `1` | Failed to send message. The function `sendto` in the class `ISocket` failed. |
+        | `4` | Illegal IP address. |
 
     #### Function: `sendShutdown`
     - Desc: Send shutdown to the target IP.
@@ -238,6 +245,12 @@
         )
         ```
     - Type: `int`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Command was sent successfully. |
+        | `1` | Failed to send command. The function `sendto` in the class `ISocket` failed. |
+        | `4` | Illegal IP address. |
 
     #### Function: `sendReboot`
     - Desc: Send reboot to the target IP.
@@ -249,6 +262,12 @@
         )
         ```
     - Type: `int`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Command was sent successfully. |
+        | `1` | Failed to send command. The function `sendto` in the class `ISocket` failed. |
+        | `4` | Illegal IP address. |
 
     #### Function: `netcat`
     - Desc: Enable netcat and connect to the target IP. The IP should **not** be a segment.
@@ -261,16 +280,31 @@
         )
         ```
     - Type: `int`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Netcat started. |
+        | `4` | Illegal IP address. |
 
     #### Function: `breakScreenControl`
     - Desc: Get out of screen control.
     - Parameters: None
     - Type: `int`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Command started. |
+        | `3` | Access denied. |
 
     #### Function: `continueScreenControl`
     - Desc: Recover screen control.
     - Parameters: None
     - Type: `int`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Command started. |
+        | `3` | Access denied. |
 
 - Private:
     
@@ -288,6 +322,12 @@
     )
     ```
 - Type: `DWORD WINAPI`
+    - Value: 
+        | Value | Desc |
+        |-------|------|
+        | `0` | Command was sent successfully. |
+        | `1` | Failed to send command. The function `sendto` in the class `ISocket` failed. |
+        | `4` | Illegal IP address. |
 
 ## Header: `JiYuAtk_lib.h`
 
@@ -297,7 +337,6 @@
 
 - Desc: Run command and get echo in `std::string` instead of console.
 - Parameters:
-
     ```cpp
     (
         std::string cmd, // Command to execute
@@ -310,13 +349,23 @@
 
 - Desc: Convert `std::string` into `int`.
 - Parameters:
-
     ```cpp
     (
         std::string str
     )
     ```
 - Type: `int`
+
+### Function: `formatANSIString`
+
+- Desc: Convert ANSI `std::string` into UTF-8 sequence.
+- Parameters:
+    ```cpp
+    (
+        const std::string str
+    )
+    ```
+- Type: `std::vector<BYTE>`
 
 ## Header: `Logger.h`
 - Desc: Logger to log information in an easier and clearer way.
@@ -328,7 +377,8 @@
     - Parameters:
     ```cpp
     (
-        FILE* fp // File pointer to log in
+        FILE* fp, // File pointer to log in
+        int level = Warning
     )
     ```
 
@@ -340,12 +390,12 @@
     - value:
     ```cpp
     {
-        DEBUG = 1,
-        INFO,
-        WARNING,
-        IERROR,
-        CRITICAL,
-        NONE
+        Debug = 1,
+        Info,
+        Warning,
+        Error,
+        Critical,
+        None
     }
     ```
 
@@ -389,4 +439,4 @@
     #### Variable: `curLevel`
     - Desc: Current minimum log level of the logger.
     - Type: `int`
-    - Default value: `WARNING`
+    - Default value: `Warning`

@@ -33,6 +33,14 @@ class JiYu_Attack {
     
     private:
         Logger* logger;
+        int sendPkg(std::string rawIP, int port, std::vector<BYTE> data);
+};
+
+struct NetcatInfo {
+    JiYu_Attack* jyAtk;
+    std::string IP;
+    int port;
+    int ncport;
 };
 
 DWORD WINAPI netcat_remote(LPVOID lpParameter);

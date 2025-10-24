@@ -5,11 +5,11 @@
 #include <vector>
 
 struct ParamOpt {
-    std::string id = "";
-    char opt = 0;
-    std::string longopt = "";
-    bool withParam = false;
-    std::string defaultvalue = "";
+    std::string id;
+    char opt;
+    std::string longopt;
+    bool withParam;
+    std::string defaultValue;
 };
 
 struct ParamRet {
