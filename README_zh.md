@@ -144,14 +144,32 @@ main 192.168.1.1 -e r
 main -i 192.168.1.1/24 -m "Hello!" -l 3 -t 50
 ```
 
+## 适用性
+本代码可用于机房中任何**上线极域**的学生机。对于极域被终止或控制的学生机，不适用于本代码。
+
+本代码已经在如下环境中被测试：
+- 编译器：MinGW GCC 4.9.2, MSVC v143 (VS 2022)
+- 系统环境：Windows 10
+- 极域版本：2016 豪华版
+
+本代码不提供任何适用性保证。
+
+## 免责声明
+对于使用本代码导致的任何后果，作者不负责任。
+
 ## 头文件指南 & 贡献指南
-如果你希望在自己的代码中调用本程序的相关接口，或者在源代码的基础上加以开发，可以参考 `header` 分支下的相关代码。其中所有不同模块的代码被分在不同的文件下，以头文件的形式互相引用。
+如果你希望在自己的代码中调用本程序的相关接口，或者在源代码的基础上加以开发，可以参考 `header` 分支下的相关代码。其中所有不同模块的代码被分在不同的文件下，以头文件的形式互相引用。  
 头文件的文档可以参见：[Jiyu-UDP-Attack-Cpp 头文件文档](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/header/docs/zh.md)
 
-如果希望对本代码提出贡献，可以提出 Issue / 在 `header` 分支下提出 PR~如果 PR 被合并，会即时对 `main.cpp` 进行更新的！
+如果希望对本代码提出贡献，可以提出 Issue / 在 `header` 分支下提出 PR~ 如果 PR 被合并，会即时对 `main.cpp` 进行更新的！
 
 ## 关于
 受到了 [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_attack) 项目的启发，于是用 C++ 重写了一个。
+
+## 致谢
+- [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_attack): 本代码开发的样板。
+- [imengyu/JiYuTrainer](https://github.com/imengyu/JiYuTrainer): 提供了一部分 C++ 代码参考。
+- <https://mivik.cn/compress.html>：美妙的压行机！
 
 ## 许可证
 [MIT 许可证](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/LICENSE)

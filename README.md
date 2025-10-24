@@ -144,14 +144,31 @@ Send message to target machines with IP `192.168.1.1` to `192.168.1.254`, contin
 main -i 192.168.1.1/24 -m "Hello!" -l 3 -t 50
 ```
 
+## Applicability
+This code is applicable to any student machine in the LAN that **has Jiyu running**. It does not apply to student machines where Jiyu has been terminated or is under control.
+
+This code has been tested in the following environment:
+- Compiler: MinGW GCC 4.9.2, MSVC v143 (VS 2022)
+- System Environment: Windows 10
+- Jiyu Version: 2016 Deluxe Edition
+
+This code provides no warranty of applicability.
+
+## Disclaimer
+The author assumes no responsibility for any consequences arising from the use of this code.
+
 ## Header Guide & Contributing Guide
-If you hope to call related interfaces of this code in your own code, or develop the source code by yourself, you can focus on related code in the `header` branch, which codes in different modules are separated in different headers, and refer others by headers.
+If you hope to call related interfaces of this code in your own code, or develop the source code by yourself, you can focus on related code in the `header` branch, where codes in different modules are separated in different headers, and refer others by headers.  
 See header docs: [Jiyu-UDP-Attack-Cpp Header Docs](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/header/docs/en.md)
 
 If you want to contribute to this code, you can raise an issue or make a pull request on the `header` branch~ If the pull request is merged, `main.cpp` will be updated in time!
 
 ## About
 Inspired by: [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_attack)
+
+## Acknowledgments
+- [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_attack): The template for this code's development.
+- [imengyu/JiYuTrainer](https://github.com/imengyu/JiYuTrainer): Provided reference C++ code.
 
 ## License
 [MIT License](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/LICENSE)
