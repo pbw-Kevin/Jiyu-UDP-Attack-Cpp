@@ -8,10 +8,6 @@
 #include "Logger.h"
 #include "ISocket.h"
 
-#ifdef _MSC_VER
-#pragma warning(disable:4530)
-#endif // _MSC_VER
-
 JiYu_Attack::JiYu_Attack() {
     logger = new Logger(stdout, Logger::Error);
     client = new ISocket(logger);

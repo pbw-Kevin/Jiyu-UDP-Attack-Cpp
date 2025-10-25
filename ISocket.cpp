@@ -48,7 +48,7 @@ ISocket::~ISocket() {
 }
 
 std::vector<std::string> ISocket::getLocalIPs() {
-    char host[100] ={0};
+    char host[100] = {};
     std::vector<std::string> ret;
 
     if(gethostname(host, sizeof(host)) == SOCKET_ERROR) {

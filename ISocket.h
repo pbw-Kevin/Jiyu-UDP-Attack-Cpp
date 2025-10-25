@@ -23,6 +23,7 @@ class ISocket {
         std::vector<std::string> getLocalIPs();
         std::vector<StudentPort> getStudentPorts();
         int send(std::string IP, int port, std::vector<BYTE> data);
+
     private:
         WSADATA wsd;
         int optval = 1;
