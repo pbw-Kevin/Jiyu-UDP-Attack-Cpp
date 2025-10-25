@@ -22,12 +22,12 @@ cl main.cpp /std:c++14 /Fe:main.exe /source-charset:utf-8 /execution-charset:gb2
 
 ### MinGW
 ```bash
-g++ main.cpp -o main.exe -lws2_32 -std=c++14 -fexec-charset=GB2312
+g++ main.cpp -o main.exe -lws2_32 -liphlpapi -std=c++14 -fexec-charset=GB2312
 ```
 
 Note when using MinGW compiler:  
 Make sure Windows-related library is in the library directory.  
-Do not forget the compile argument `-lws_32`. If not using command line, add this argument to the compile options in your IDE.
+Do not forget the compile arguments `-lws_32` and `-liphlpapi`. If not using command line, add these arguments to the compile options in your IDE.
 
 ## Usage
 Start UI by simply run the program or call:
@@ -152,6 +152,10 @@ This code has been tested in the following environment:
 - System Environment: Windows 10
 - Jiyu Version: 2016 Deluxe Edition
 
+Note:  
+Some features of this code require the CMD command line to be used. So the code has built-in detection modules, but usability is affected by uncontrollable factors such as system latency.  
+If this feature is not needed, it can be eliminated.
+
 This code provides no warranty of applicability.
 
 ## Disclaimer
@@ -169,6 +173,7 @@ Inspired by: [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_att
 ## Acknowledgments
 - [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_attack): The template for this code's development.
 - [imengyu/JiYuTrainer](https://github.com/imengyu/JiYuTrainer): Provided reference C++ code.
+- <https://mivik.cn/compress.html>: For the amazing code compression tool!
 
 ## License
 [MIT License](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/LICENSE)

