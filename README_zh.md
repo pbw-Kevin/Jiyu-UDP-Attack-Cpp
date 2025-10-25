@@ -17,7 +17,7 @@ English document: [README.md](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/b
 
 ### MSVC
 ```bash
-cl main.cpp /std:c++14 /Fe:main.exe /source-charset:utf-8 /execution-charset:gb2312
+cl main.cpp /std:c++14 /Fe:main.exe /EHsc /source-charset:utf-8 /execution-charset:gb2312
 ```
 
 ### MinGW

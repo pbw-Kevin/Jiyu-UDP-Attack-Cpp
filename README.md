@@ -17,7 +17,7 @@ Compile command:
 
 ### MSVC
 ```bash
-cl main.cpp /std:c++14 /Fe:main.exe /source-charset:utf-8 /execution-charset:gb2312
+cl main.cpp /std:c++14 /Fe:main.exe /EHsc /source-charset:utf-8 /execution-charset:gb2312
 ```
 
 ### MinGW
