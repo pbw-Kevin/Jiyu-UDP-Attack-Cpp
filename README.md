@@ -64,7 +64,7 @@ Available options for `<Extra Option>` of `-e` argument:
 | `g` | Get your current IP address and the port which Student Terminal listens to. |
 | `nc` | Reverse shell. Needs Internet access on target machine. Use command `exit` to exit. |
 | `break` | Get out of screen control. Needs administrator access. |
-| `continue` | Recover screen control. |
+| `continue` | Recover screen control. Needs administrator access. |
 
 Target IP available for `<IP>` of `-i(--ip)` argument:
 - A direct IP. eg. `192.168.1.1`
@@ -90,6 +90,7 @@ main -e break
 
 3. Recover screen control:
 
+Needs administrator access for the same reason.
 ```bash
 main -e continue
 ```
