@@ -64,7 +64,7 @@ main [-h(--help) |
 | `g` | 获取当前的 IP 地址和学生端监听的端口。 |
 | `nc` | 反弹 Shell。目标机需要能访问互联网。在退出时可使用 `exit` 命令。 |
 | `break` | 脱离屏幕控制。需要以管理员身份运行程序。 |
-| `continue` | 恢复屏幕控制。 |
+| `continue` | 恢复屏幕控制。需要以管理员身份运行程序。 |
 
 在 `-i(--ip)` 参数的 `<IP>` 中，可用的 IP 有：
 - 一个独立的 IP。例子： `192.168.1.1`
@@ -90,6 +90,7 @@ main -e break
 
 3. 恢复屏幕控制
 
+同样需要管理员权限。
 ```bash
 main -e continue
 ```
@@ -148,7 +149,7 @@ main -i 192.168.1.1/24 -m "Hello!" -l 3 -t 50
 本代码可用于机房中任何**上线极域**的学生机。对于极域被终止或控制的学生机，不适用于本代码。
 
 本代码已经在如下环境中被测试：
-- 编译器：MinGW GCC 4.9.2, MSVC v143 (VS 2022)
+- 编译器：MinGW GCC 4.9.2、MSVC v143 (VS 2022)
 - 系统环境：Windows 10
 - 极域版本：2016 豪华版
 
@@ -173,7 +174,7 @@ main -i 192.168.1.1/24 -m "Hello!" -l 3 -t 50
 ## 致谢
 - [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_attack): 本代码开发的样板。
 - [imengyu/JiYuTrainer](https://github.com/imengyu/JiYuTrainer): 提供了一部分 C++ 代码参考。
-- <https://mivik.cn/compress.html>：美妙的压行机！
+- <https://mivik.moe/compress.html>：美妙的压行机！
 
 ## 许可证
 [MIT 许可证](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/LICENSE)

